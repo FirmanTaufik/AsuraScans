@@ -24,11 +24,11 @@ import com.app.asurascans.ui.theme.AsuraScansTheme
 
 @Composable
 fun BottomSlider(modifier: Modifier = Modifier) {
-    Box(modifier = modifier
+    /*Box(modifier = modifier
         .background(shape = Round)){
 
 
-    }
+    }*/
 }
 
 @Composable
