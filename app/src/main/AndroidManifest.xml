@@ -15,7 +15,6 @@
         <activity
             android:name=".ui.screen.DetailActivity"
             android:exported="false"
-            android:label="@string/title_activity_detail"
             android:theme="@style/Theme.AsuraScans" />
         <activity
             android:name=".MainActivity"

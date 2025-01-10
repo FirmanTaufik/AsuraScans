@@ -17,41 +17,17 @@ import androidx.compose.runtime.Composable
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.toArgb
 import androidx.compose.ui.tooling.preview.Preview
+import com.app.asurascans.core.BaseActivity
 import com.app.asurascans.ui.screen.HomeScreen
 import com.app.asurascans.ui.theme.AsuraScansTheme
 import com.app.asurascans.ui.theme.BackroundColor
 import com.app.asurascans.ui.theme.ColorNav
 
-class MainActivity : ComponentActivity() {
-    override fun onCreate(savedInstanceState: Bundle?) {
-        super.onCreate(savedInstanceState)
+class MainActivity : BaseActivity() {
 
-        enableEdgeToEdge(
-            statusBarStyle = SystemBarStyle.dark(
-                scrim = BackroundColor.toArgb(),
-            ),
-            navigationBarStyle = SystemBarStyle.light(
-                scrim = ColorNav.toArgb(),
-                darkScrim = ColorNav.toArgb()
-            )
-        )
-
-        setContent {
-            AsuraScansTheme {
-                // A surface container using the 'background' color from the theme
-                Surface(
-                    modifier = Modifier
-                        .fillMaxSize()
-                        .background(BackroundColor)
-                        .imePadding()
-                        .fillMaxSize()
-                        .systemBarsPadding(),
-                    color = MaterialTheme.colorScheme.background
-                ) {
-                    HomeScreen()
-                }
-            }
-        }
+    @Composable
+    override fun ScreenContent() {
+        HomeScreen()
     }
 }
 
