@@ -1,6 +1,7 @@
 package com.app.asurascans.ui.screen
 
 import androidx.compose.foundation.Image
+import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
@@ -17,13 +18,21 @@ import androidx.compose.foundation.lazy.LazyRow
 import androidx.compose.foundation.lazy.itemsIndexed
 import androidx.compose.foundation.lazy.rememberLazyListState
 import androidx.compose.foundation.rememberScrollState
+import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.foundation.verticalScroll
+import androidx.compose.material.icons.Icons
 import androidx.compose.material3.Divider
+import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.Icon
+import androidx.compose.material3.IconButton
+import androidx.compose.material3.LocalMinimumInteractiveComponentEnforcement
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.CompositionLocalProvider
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.layout.ContentScale
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.res.stringArrayResource
 import androidx.compose.ui.res.stringResource
@@ -34,13 +43,17 @@ import androidx.compose.ui.unit.sp
 import coil.compose.AsyncImage
 import com.app.asurascans.R
 import com.app.asurascans.ui.item.BottomSlider
+import com.app.asurascans.ui.item.LastUpdateItem
 import com.app.asurascans.ui.item.MostViewItem
 import com.app.asurascans.ui.item.TextSelectedItem
 import com.app.asurascans.ui.item.TopSliderItem
+import com.app.asurascans.ui.theme.primaryColor
 
+@OptIn(ExperimentalMaterial3Api::class)
 @Composable
 fun HomeScreen(modifier: Modifier = Modifier) {
     val listTop = stringArrayResource(id = R.array.list_type_home_top)
+    val listBottom = stringArrayResource(id = R.array.list_type_home_bottom)
     val scrollStateColumn = rememberScrollState()
     val scrollStateRowMostView = rememberLazyListState()
 
@@ -54,15 +67,19 @@ fun HomeScreen(modifier: Modifier = Modifier) {
         Spacer(modifier = Modifier.height(5.dp))
         BottomSlider()
         Spacer(modifier = Modifier.height(15.dp))
-        Row(modifier = Modifier
-            .fillMaxWidth()
-            .padding(horizontal = 5.dp),
-            verticalAlignment = Alignment.CenterVertically) {
-            Text(text = stringResource(id = R.string.most_view),
+        Row(
+            modifier = Modifier
+                .fillMaxWidth()
+                .padding(horizontal = 5.dp),
+            verticalAlignment = Alignment.CenterVertically
+        ) {
+            Text(
+                text = stringResource(id = R.string.most_view),
                 modifier = Modifier.weight(1f), fontWeight = FontWeight.Bold,
-                fontSize = 18.sp)
+                fontSize = 18.sp
+            )
             LazyRow(modifier = Modifier.wrapContentSize()) {
-                itemsIndexed(listTop){ i, value->
+                itemsIndexed(listTop) { i, value ->
                     TextSelectedItem(value)
                 }
             }
@@ -70,14 +87,51 @@ fun HomeScreen(modifier: Modifier = Modifier) {
 
         Spacer(modifier = Modifier.height(15.dp))
 
-        LazyRow(modifier = Modifier.fillMaxWidth(),
-            state = scrollStateRowMostView) {
-            items(10){
+        LazyRow(
+            modifier = Modifier.fillMaxWidth(),
+            state = scrollStateRowMostView
+        ) {
+            items(10) {
                 MostViewItem()
             }
         }
+
+        Spacer(modifier = Modifier.height(15.dp))
+        Text(
+            text = stringResource(id = R.string.last_update),
+            modifier = Modifier.wrapContentSize(), fontWeight = FontWeight.Bold,
+            fontSize = 18.sp
+        )
+
+        Row(modifier = Modifier.fillMaxWidth()) {
+            LazyRow(modifier = Modifier.weight(1f)) {
+                itemsIndexed(listTop) { i, value ->
+                    TextSelectedItem(value)
+                }
+            }
+            Image(
+                painter = painterResource(id = R.drawable.ic_grid),
+                "contentDescription",
+                modifier = Modifier.size(30.dp)
+            )
+            Image(
+                painter = painterResource(id = R.drawable.ic_list_inactive),
+                "contentDescription",
+                modifier = Modifier.size(30.dp),
+                contentScale = ContentScale.Crop
+            )
+        }
+        Spacer(modifier = Modifier.height(15.dp))
+        LazyRow(
+            modifier = Modifier.fillMaxWidth(),
+            state = scrollStateRowMostView
+        ) {
+            items(10) {
+                LastUpdateItem()
+            }
+        }
     }
-    
+
     /*val listState = rememberLazyListState()
     
     LazyColumn(modifier = modifier,
@@ -103,9 +157,11 @@ fun HomeScreen(modifier: Modifier = Modifier) {
 
 @Composable
 fun TopSlider(modifier: Modifier = Modifier) {
-    Box(modifier = Modifier
-        .fillMaxWidth()
-        .height(150.dp)) {
+    Box(
+        modifier = Modifier
+            .fillMaxWidth()
+            .height(150.dp)
+    ) {
         Box(modifier = Modifier.padding(horizontal = 10.dp)) {
             TopSliderItem()
         }

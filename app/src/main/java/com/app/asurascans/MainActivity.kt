@@ -28,6 +28,7 @@ class MainActivity : BaseActivity() {
     @Composable
     override fun ScreenContent() {
         HomeScreen()
+
     }
 }
 

@@ -152,4 +152,7 @@ dependencies {
 
     implementation("com.github.MshariAlsayari:Request-Permission-Compose:1.2.0")
 
+    implementation("com.github.ireward:compose-html:1.0.2")
+
+
 }

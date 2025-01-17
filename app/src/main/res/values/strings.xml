@@ -1,11 +1,24 @@
 <resources>
-    <string name="app_name">AsuraScans</string>
+    <string name="app_name">MangaEvo</string>
     <string name="most_view">View Terbanyak</string>
+    <string name="last_update">Update Terbaru</string>
+    <string name="welcome">Selamat datang di</string>
 
     <string-array name="list_type_home_top">
         <item name="day">Day</item>
         <item name="week">Week</item>
         <item name="month">Month</item>
     </string-array>
+
+    <string-array name="list_type_home_bottom">
+        <item name="semua">Semua</item>
+        <item name="manga">Manga</item>
+        <item name="manhwa">Manhwa</item>
+        <item name="manhua">Manhua</item>
+    </string-array>
+
+    <string name="login_intruction">Silahkan login untuk dapat menggunakan mengakses seluruh fitur aplikasi <font color="#FFB12E">@app_name</font></string>
+    <string name="alert_privacy">Dengan melakukan login maka kamu telah\nsetuju dengan ketentuan</string>
+    <string name="privacy_policy_and_terms_of_service"><font color="#FFB12E">Privacy Policy</font> &amp; <font color="#FFB12E">Terms of Service</font></string>
 
 </resources>
