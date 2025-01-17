@@ -106,12 +106,12 @@ fun LoginContent(modifier: Modifier = Modifier) {
 
             Text(
                 text = stringResource(id = R.string.alert_privacy), color = Color.White,
-                fontSize = 1.sp, textAlign = TextAlign.Center
+                fontSize = 18.sp, textAlign = TextAlign.Center
             )
 
             HtmlText(
                 text = stringResource(id = R.string.privacy_policy_and_terms_of_service),
-                fontSize = 20.sp
+                fontSize = 18.sp
             )
         }
 
