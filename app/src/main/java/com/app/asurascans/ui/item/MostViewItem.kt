@@ -1,5 +1,6 @@
 package com.app.asurascans.ui.item
 
+import android.content.Intent
 import android.graphics.drawable.shapes.Shape
 import androidx.compose.foundation.background
 import androidx.compose.foundation.clickable
@@ -30,17 +31,20 @@ import androidx.compose.ui.draw.clip
 import androidx.compose.ui.draw.clipToBounds
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.layout.ContentScale
+import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import coil.compose.AsyncImage
 import com.app.asurascans.helper.CustomRippleTheme
+import com.app.asurascans.ui.screen.DetailActivity
 import com.app.asurascans.ui.theme.BackroundColor
 import com.app.asurascans.ui.theme.backgroundItemColor
 import com.app.asurascans.ui.theme.primaryColor
 
 @Composable
 fun MostViewItem() {
+    val context = LocalContext.current
     CompositionLocalProvider(LocalRippleTheme provides CustomRippleTheme(primaryColor)) {
         Box (modifier = Modifier
             .wrapContentSize()
@@ -49,7 +53,9 @@ fun MostViewItem() {
                 modifier = Modifier
                     .width(110.dp)
                     .wrapContentHeight()
-                    .clickable { }
+                    .clickable {
+                        context.startActivity(Intent(context, DetailActivity::class.java))
+                    }
                     .background(color = Color.Red, RoundedCornerShape(6.dp))
             ) {
                 AsyncImage(
