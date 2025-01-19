@@ -2,6 +2,7 @@ package com.app.asurascans.ui.screen
 
 import androidx.compose.foundation.Image
 import androidx.compose.foundation.background
+import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
@@ -30,6 +31,10 @@ import androidx.compose.material3.LocalMinimumInteractiveComponentEnforcement
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.CompositionLocalProvider
+import androidx.compose.runtime.getValue
+import androidx.compose.runtime.mutableStateOf
+import androidx.compose.runtime.remember
+import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
@@ -44,7 +49,8 @@ import androidx.compose.ui.unit.sp
 import coil.compose.AsyncImage
 import com.app.asurascans.R
 import com.app.asurascans.ui.item.BottomSlider
-import com.app.asurascans.ui.item.LastUpdateItem
+import com.app.asurascans.ui.item.LastUpdateGridItem
+import com.app.asurascans.ui.item.LastUpdateListItem
 import com.app.asurascans.ui.item.MostViewItem
 import com.app.asurascans.ui.item.TextSelectedItem
 import com.app.asurascans.ui.item.TopSliderItem
@@ -110,6 +116,7 @@ private fun MostView(modifier: Modifier = Modifier) {
 
 @Composable
 private fun LatestUpdate() {
+    var isGrid by remember {  mutableStateOf(true)   }
     val scrollStateLatestUpdate = rememberLazyListState()
     val listBottom = stringArrayResource(id = R.array.list_type_home_bottom)
     Text(
@@ -128,11 +135,17 @@ private fun LatestUpdate() {
             painter = painterResource(id = R.drawable.ic_grid),
             "contentDescription",
             modifier = Modifier.size(30.dp)
+                .clickable {
+                    isGrid=true
+                },
         )
         Image(
             painter = painterResource(id = R.drawable.ic_list_inactive),
             "contentDescription",
-            modifier = Modifier.size(30.dp),
+            modifier = Modifier.size(30.dp)
+                .clickable {
+                    isGrid=false
+                },
             contentScale = ContentScale.Crop
         )
     }
@@ -142,7 +155,8 @@ private fun LatestUpdate() {
         state = scrollStateLatestUpdate
     ) {
         items(10) {
-            LastUpdateItem()
+            if (isGrid) LastUpdateGridItem()
+            else LastUpdateListItem()
         }
     }
 }

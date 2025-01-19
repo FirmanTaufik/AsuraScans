@@ -20,7 +20,7 @@ import com.app.asurascans.ui.theme.primaryColorSelected
 fun TextSelectedItem(value: String ?= "this") {
     Column(modifier = Modifier.wrapContentWidth(),
         horizontalAlignment = Alignment.CenterHorizontally) {
-        Text(text =value ?: "", color = primaryColorSelected, fontSize = 18.sp,
+        Text(text =value ?: "", color = primaryColorSelected, fontSize = 15.sp,
             modifier = Modifier.padding(horizontal = 5.dp),)
         Divider(thickness = 3.dp,
             color = primaryColor,

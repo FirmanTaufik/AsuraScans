@@ -37,7 +37,7 @@ import com.app.asurascans.R
 import com.app.asurascans.ui.theme.ColorTransparent
 
 @Composable
-fun LastUpdateItem(modifier: Modifier = Modifier) {
+fun LastUpdateGridItem(modifier: Modifier = Modifier) {
     Column(
         modifier = Modifier
             .wrapContentSize()

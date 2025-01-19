@@ -44,8 +44,8 @@ class MainActivity : BaseActivity() {
     override fun ScreenContent() {
         Column(Modifier.background(BackroundColor)) {
             Header()
-            AlphabetScreen(modifier = Modifier.weight(1f))
-            //HomeScreen(modifier = Modifier.weight(1f))
+            //AlphabetScreen(modifier = Modifier.weight(1f))
+            HomeScreen(modifier = Modifier.weight(1f))
         }
 
     }
