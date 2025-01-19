@@ -14,6 +14,7 @@ import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.layout.wrapContentSize
 import androidx.compose.foundation.layout.wrapContentWidth
+import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.LazyRow
 import androidx.compose.foundation.lazy.itemsIndexed
 import androidx.compose.foundation.lazy.rememberLazyListState
@@ -52,14 +53,9 @@ import com.app.asurascans.ui.theme.primaryColor
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
 fun HomeScreen(modifier: Modifier = Modifier) {
-    val listTop = stringArrayResource(id = R.array.list_type_home_top)
-    val listBottom = stringArrayResource(id = R.array.list_type_home_bottom)
-    val scrollStateColumn = rememberScrollState()
-    val scrollStateRowMostView = rememberLazyListState()
 
-
-    Column(modifier = modifier.verticalScroll(scrollStateColumn)) {
-        Header()
+    val state = rememberScrollState()
+    Column(modifier = modifier.verticalScroll(state)) {
         Spacer(modifier = Modifier.height(5.dp))
         Divider()
         Spacer(modifier = Modifier.height(5.dp))
@@ -67,92 +63,88 @@ fun HomeScreen(modifier: Modifier = Modifier) {
         Spacer(modifier = Modifier.height(5.dp))
         BottomSlider()
         Spacer(modifier = Modifier.height(15.dp))
-        Row(
-            modifier = Modifier
-                .fillMaxWidth()
-                .padding(horizontal = 5.dp),
-            verticalAlignment = Alignment.CenterVertically
-        ) {
-            Text(
-                text = stringResource(id = R.string.most_view),
-                modifier = Modifier.weight(1f), fontWeight = FontWeight.Bold,
-                fontSize = 18.sp
-            )
-            LazyRow(modifier = Modifier.wrapContentSize()) {
-                itemsIndexed(listTop) { i, value ->
-                    TextSelectedItem(value)
-                }
-            }
-        }
-
+        MostView()
         Spacer(modifier = Modifier.height(15.dp))
+        LatestUpdate()
 
-        LazyRow(
-            modifier = Modifier.fillMaxWidth(),
-            state = scrollStateRowMostView
-        ) {
-            items(10) {
-                MostViewItem()
-            }
-        }
+    }
 
-        Spacer(modifier = Modifier.height(15.dp))
+}
+
+
+@Composable
+private fun MostView(modifier: Modifier = Modifier) {
+    val listTop = stringArrayResource(id = R.array.list_type_home_top)
+    val scrollStateRowMostView = rememberLazyListState()
+    val scrollStateColumn = rememberScrollState()
+    Row(
+        modifier = Modifier
+            .fillMaxWidth()
+            .padding(horizontal = 5.dp),
+        verticalAlignment = Alignment.CenterVertically
+    ) {
         Text(
-            text = stringResource(id = R.string.last_update),
-            modifier = Modifier.wrapContentSize(), fontWeight = FontWeight.Bold,
+            text = stringResource(id = R.string.most_view),
+            modifier = Modifier.weight(1f), fontWeight = FontWeight.Bold,
             fontSize = 18.sp
         )
-
-        Row(modifier = Modifier.fillMaxWidth()) {
-            LazyRow(modifier = Modifier.weight(1f)) {
-                itemsIndexed(listTop) { i, value ->
-                    TextSelectedItem(value)
-                }
-            }
-            Image(
-                painter = painterResource(id = R.drawable.ic_grid),
-                "contentDescription",
-                modifier = Modifier.size(30.dp)
-            )
-            Image(
-                painter = painterResource(id = R.drawable.ic_list_inactive),
-                "contentDescription",
-                modifier = Modifier.size(30.dp),
-                contentScale = ContentScale.Crop
-            )
-        }
-        Spacer(modifier = Modifier.height(15.dp))
-        LazyRow(
-            modifier = Modifier.fillMaxWidth(),
-            state = scrollStateRowMostView
-        ) {
-            items(10) {
-                LastUpdateItem()
+        LazyRow(modifier = Modifier.wrapContentSize()) {
+            itemsIndexed(listTop) { i, value ->
+                TextSelectedItem(value)
             }
         }
     }
 
-    /*val listState = rememberLazyListState()
-    
-    LazyColumn(modifier = modifier,
-        state = listState) {
-        item {
-            Header()
+    Spacer(modifier = Modifier.height(15.dp))
+
+    LazyRow(
+        modifier = Modifier.fillMaxWidth(),
+        state = scrollStateRowMostView
+    ) {
+        items(10) {
+            MostViewItem()
         }
-        item {
-            Spacer(modifier = Modifier.height(5.dp))
+    }
+}
+
+
+@Composable
+private fun LatestUpdate() {
+    val scrollStateLatestUpdate = rememberLazyListState()
+    val listBottom = stringArrayResource(id = R.array.list_type_home_bottom)
+    Text(
+        text = stringResource(id = R.string.last_update),
+        modifier = Modifier.wrapContentSize(), fontWeight = FontWeight.Bold,
+        fontSize = 18.sp
+    )
+
+    Row(modifier = Modifier.fillMaxWidth()) {
+        LazyRow(modifier = Modifier.weight(1f)) {
+            itemsIndexed(listBottom) { i, value ->
+                TextSelectedItem(value)
+            }
         }
-        item { Divider() }
-        item {
-            Spacer(modifier = Modifier.height(5.dp))
+        Image(
+            painter = painterResource(id = R.drawable.ic_grid),
+            "contentDescription",
+            modifier = Modifier.size(30.dp)
+        )
+        Image(
+            painter = painterResource(id = R.drawable.ic_list_inactive),
+            "contentDescription",
+            modifier = Modifier.size(30.dp),
+            contentScale = ContentScale.Crop
+        )
+    }
+    Spacer(modifier = Modifier.height(15.dp))
+    LazyRow(
+        modifier = Modifier.fillMaxWidth(),
+        state = scrollStateLatestUpdate
+    ) {
+        items(10) {
+            LastUpdateItem()
         }
-        item {
-            TopSlider()
-        }
-        item {
-            BottomSlider()
-        }
-    }*/
+    }
 }
 
 @Composable
@@ -190,37 +182,4 @@ fun TopSlider(modifier: Modifier = Modifier) {
             )
         }
     }
-}
-
-@Composable
-fun Header() {
-    Row(
-        modifier = Modifier
-            .fillMaxWidth()
-    ) {
-        Box(
-            modifier = Modifier
-                .weight(1f)
-        ) {
-            AsyncImage(model = R.drawable.ic_small_app, contentDescription = null)
-            //  Icon(painter = painterResource(id = R.drawable.ic_small_app), contentDescription =null )
-        }
-        Row(modifier = Modifier.wrapContentSize()) {
-            Icon(painter = painterResource(id = R.drawable.ic_search), contentDescription = null)
-            Spacer(modifier = Modifier.width(5.dp))
-            Icon(painter = painterResource(id = R.drawable.ic_notif), contentDescription = null)
-            Spacer(modifier = Modifier.width(5.dp))
-            AsyncImage(
-                model = R.drawable.ic_person, contentDescription = null,
-                modifier = Modifier.size(30.dp)
-            )
-        }
-
-    }
-}
-
-@Preview(showBackground = true)
-@Composable
-fun GreetingPreview() {
-    Header()
 }

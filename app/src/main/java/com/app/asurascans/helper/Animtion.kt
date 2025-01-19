@@ -1,3 +1,4 @@
+/*
 package com.app.asurascans.helper
 
 import androidx.compose.material.ripple.RippleAlpha
@@ -19,4 +20,4 @@ class CustomRippleTheme(private val color: Color): RippleTheme {
         hoveredAlpha = 0.0f,
         pressedAlpha = 0.0f,
     )
-}
+}*/

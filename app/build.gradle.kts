@@ -119,7 +119,7 @@ dependencies {
     debugImplementation("com.github.chuckerteam.chucker:library:3.5.2")
     releaseImplementation ("com.github.chuckerteam.chucker:library-no-op:3.5.2")
     implementation ("io.github.2307vivek:seeker:1.2.2")
-    implementation ("com.google.accompanist:accompanist-systemuicontroller:0.35.0-alpha")
+    implementation (libs.accompanist.systemuicontroller)
 
     implementation ("androidx.paging:paging-compose:3.3.0-alpha02")
     implementation ("androidx.datastore:datastore-preferences:1.0.0")

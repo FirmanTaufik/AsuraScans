@@ -22,7 +22,7 @@ import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import com.app.asurascans.R
 import com.app.asurascans.core.BaseActivity
-import com.app.asurascans.ui.theme.ColorTransaprent
+import com.app.asurascans.ui.theme.ColorTransparent
 import com.app.asurascans.ui.theme.primaryColor
 
 class DetailActivity : BaseActivity() {
@@ -49,7 +49,7 @@ class DetailActivity : BaseActivity() {
                     onClick = { /*TODO*/ },
                     modifier = Modifier
                         .size(60.dp)
-                        .background(color = ColorTransaprent, shape = CircleShape)
+                        .background(color = ColorTransparent, shape = CircleShape)
                 ) {
                     Column(
                         modifier = Modifier.wrapContentSize(),
@@ -70,7 +70,7 @@ class DetailActivity : BaseActivity() {
                     onClick = { /*TODO*/ },
                     modifier = Modifier
                         .size(60.dp)
-                        .background(color = ColorTransaprent, shape = CircleShape)
+                        .background(color = ColorTransparent, shape = CircleShape)
                 ) {
                     Column(
                         modifier = Modifier.wrapContentSize(),

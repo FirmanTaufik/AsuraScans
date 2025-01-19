@@ -36,7 +36,6 @@ import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import coil.compose.AsyncImage
-import com.app.asurascans.helper.CustomRippleTheme
 import com.app.asurascans.ui.screen.DetailActivity
 import com.app.asurascans.ui.theme.BackroundColor
 import com.app.asurascans.ui.theme.backgroundItemColor
@@ -45,7 +44,6 @@ import com.app.asurascans.ui.theme.primaryColor
 @Composable
 fun MostViewItem() {
     val context = LocalContext.current
-    CompositionLocalProvider(LocalRippleTheme provides CustomRippleTheme(primaryColor)) {
         Box (modifier = Modifier
             .wrapContentSize()
             .padding(end = 10.dp)){
@@ -56,7 +54,7 @@ fun MostViewItem() {
                     .clickable {
                         context.startActivity(Intent(context, DetailActivity::class.java))
                     }
-                    .background(color = Color.Red, RoundedCornerShape(6.dp))
+                    .background(color = backgroundItemColor, RoundedCornerShape(6.dp))
             ) {
                 AsyncImage(
                     model = "https://upload.wikimedia.org/wikipedia/id/4/46/Jujutsu_kaisen.jpg",
@@ -95,6 +93,5 @@ fun MostViewItem() {
                 Spacer(modifier = Modifier.width(10.dp))
             }
         }
-    }
 }
 
