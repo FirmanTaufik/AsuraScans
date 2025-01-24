@@ -6,20 +6,27 @@ import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxSize
+import androidx.compose.foundation.layout.fillMaxWidth
+import androidx.compose.foundation.layout.height
+import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.layout.wrapContentSize
 import androidx.compose.foundation.shape.CircleShape
+import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material3.Icon
 import androidx.compose.material3.IconButton
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.draw.clip
 import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.layout.ContentScale
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
+import coil.compose.AsyncImage
 import com.app.asurascans.R
 import com.app.asurascans.core.BaseActivity
 import com.app.asurascans.ui.theme.ColorTransparent
@@ -29,61 +36,82 @@ class DetailActivity : BaseActivity() {
 
     @Composable
     override fun ScreenContent() {
-        Box(modifier = Modifier.fillMaxSize()) {
-            IconButton(modifier = Modifier
-                .size(60.dp)
-                .align(Alignment.TopStart), onClick = { /*TODO*/ }) {
-                Icon(
-                    painter = painterResource(id = R.drawable.detail_ic_row_back),
-                    contentDescription = null
-                )
-            }
+        Box(modifier = Modifier ) {
+            AsyncImage(model = "https://imgsrv.crunchyroll.com/cdn-cgi/image/fit=contain,format=auto,quality=85,width=480,height=720/catalog/crunchyroll/323c82257b2f6567fabbb7bd55bfa753.jpg",
+                contentDescription = null,
+                contentScale = ContentScale.Crop,
+                modifier = Modifier.fillMaxSize())
+            Column(horizontalAlignment = Alignment.CenterHorizontally,
+                modifier = Modifier.fillMaxSize()) {
+                Box (modifier = Modifier
+                    .fillMaxWidth()
+                    .padding(10.dp),
+                    contentAlignment = Alignment.Center){
 
-            Row(
-                modifier = Modifier
-                    .wrapContentSize()
-                    .align(Alignment.TopEnd)
-            ) {
-
-                IconButton(
-                    onClick = { /*TODO*/ },
-                    modifier = Modifier
-                        .size(60.dp)
-                        .background(color = ColorTransparent, shape = CircleShape)
-                ) {
-                    Column(
-                        modifier = Modifier.wrapContentSize(),
-                        horizontalAlignment = Alignment.CenterHorizontally
-                    ) {
+                    IconButton(modifier = Modifier
+                        .size(50.dp)
+                        .align(Alignment.TopStart), onClick = { /*TODO*/ }) {
                         Icon(
-                            painter = painterResource(id = R.drawable.ic_bookmark),
-                            contentDescription = null,
-                            tint = primaryColor
+                            painter = painterResource(id = R.drawable.detail_ic_row_back),
+                            contentDescription = null
                         )
-                        Text(text = "123", color = Color.White, fontSize = 15.sp)
+                    }
+
+                    Row(
+                        modifier = Modifier
+                            .wrapContentSize()
+                            .align(Alignment.TopEnd)
+                    ) {
+
+                        IconButton(
+                            onClick = { /*TODO*/ },
+                            modifier = Modifier
+                                .size(60.dp)
+                                .background(color = ColorTransparent, shape = CircleShape)
+                        ) {
+                            Column(
+                                modifier = Modifier.wrapContentSize(),
+                                horizontalAlignment = Alignment.CenterHorizontally
+                            ) {
+                                Icon(
+                                    painter = painterResource(id = R.drawable.ic_bookmark),
+                                    contentDescription = null,
+                                    tint = primaryColor
+                                )
+                                Text(text = "123", color = Color.White, fontSize = 15.sp)
+                            }
+                        }
+
+                        Spacer(modifier = Modifier.width(10.dp))
+
+                        IconButton(
+                            onClick = { /*TODO*/ },
+                            modifier = Modifier
+                                .size(60.dp)
+                                .background(color = ColorTransparent, shape = CircleShape)
+                        ) {
+                            Column(
+                                modifier = Modifier.wrapContentSize(),
+                                horizontalAlignment = Alignment.CenterHorizontally
+                            ) {
+                                Icon(
+                                    painter = painterResource(id = R.drawable.ic_comment),
+                                    contentDescription = null,
+                                    tint = primaryColor
+                                )
+                                Text(text = "123", color = Color.White, fontSize = 15.sp)
+                            }
+                        }
                     }
                 }
-
-                Spacer(modifier = Modifier.width(10.dp))
-
-                IconButton(
-                    onClick = { /*TODO*/ },
+                Spacer(modifier = Modifier.height(15.dp))
+                AsyncImage(model = "https://imgsrv.crunchyroll.com/cdn-cgi/image/fit=contain,format=auto,quality=85,width=480,height=720/catalog/crunchyroll/323c82257b2f6567fabbb7bd55bfa753.jpg",
+                    contentDescription = null,
+                    contentScale = ContentScale.Crop,
                     modifier = Modifier
-                        .size(60.dp)
-                        .background(color = ColorTransparent, shape = CircleShape)
-                ) {
-                    Column(
-                        modifier = Modifier.wrapContentSize(),
-                        horizontalAlignment = Alignment.CenterHorizontally
-                    ) {
-                        Icon(
-                            painter = painterResource(id = R.drawable.ic_comment),
-                            contentDescription = null,
-                            tint = primaryColor
-                        )
-                        Text(text = "123", color = Color.White, fontSize = 15.sp)
-                    }
-                }
+                        .width(180.dp)
+                        .height(240.dp)
+                        .clip(RoundedCornerShape(10.dp)))
             }
         }
     }
