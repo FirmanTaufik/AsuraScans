@@ -54,6 +54,9 @@ android {
             excludes += "/META-INF/{AL2.0,LGPL2.1}"
         }
     }
+    kotlin.sourceSets.all {
+         languageSettings.enableLanguageFeature("DataObjects")
+    }
 }
 
 dependencies {
@@ -154,5 +157,7 @@ dependencies {
 
     implementation("com.github.ireward:compose-html:1.0.2")
 
+    val nav_version = "2.8.6"
+    implementation("androidx.navigation:navigation-compose:$nav_version")
 
 }

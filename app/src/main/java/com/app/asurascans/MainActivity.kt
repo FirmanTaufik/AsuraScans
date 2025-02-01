@@ -1,53 +1,107 @@
 package com.app.asurascans
 
-import android.graphics.Color
-import android.os.Bundle
-import androidx.activity.ComponentActivity
-import androidx.activity.SystemBarStyle
-import androidx.activity.compose.setContent
-import androidx.activity.enableEdgeToEdge
+import android.annotation.SuppressLint
 import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.Spacer
-import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
-import androidx.compose.foundation.layout.imePadding
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
-import androidx.compose.foundation.layout.systemBarsPadding
 import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.layout.wrapContentSize
+import androidx.compose.material3.BottomAppBar
 import androidx.compose.material3.Icon
-import androidx.compose.material3.MaterialTheme
-import androidx.compose.material3.Surface
+import androidx.compose.material3.NavigationBarItem
+import androidx.compose.material3.NavigationBarItemDefaults
+import androidx.compose.material3.Scaffold
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.MutableState
+import androidx.compose.runtime.getValue
+import androidx.compose.runtime.mutableStateOf
+import androidx.compose.runtime.saveable.rememberSaveable
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
-import androidx.compose.ui.graphics.toArgb
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
+import androidx.navigation.NavController
+import androidx.navigation.NavHostController
+import androidx.navigation.compose.NavHost
+import androidx.navigation.compose.composable
+import androidx.navigation.compose.currentBackStackEntryAsState
+import androidx.navigation.compose.rememberNavController
 import coil.compose.AsyncImage
 import com.app.asurascans.core.BaseActivity
+import com.app.asurascans.ui.navigation.NavigationItem
 import com.app.asurascans.ui.screen.AlphabetScreen
+import com.app.asurascans.ui.screen.DiscoverScreen
+import com.app.asurascans.ui.screen.HistoryBookmark
 import com.app.asurascans.ui.screen.HomeScreen
+import com.app.asurascans.ui.screen.SettingScreen
 import com.app.asurascans.ui.theme.AsuraScansTheme
 import com.app.asurascans.ui.theme.BackroundColor
+import com.app.asurascans.ui.theme.ColorButtonRefreshReadChapter
 import com.app.asurascans.ui.theme.ColorNav
+import com.app.asurascans.ui.theme.ColorWhite
+import com.app.asurascans.ui.theme.primaryColor
+import com.app.asurascans.ui.theme.primaryColorSelected
 
 class MainActivity : BaseActivity() {
 
+    @SuppressLint("UnusedMaterial3ScaffoldPaddingParameter")
     @Composable
     override fun ScreenContent() {
-        Column(Modifier.background(BackroundColor)) {
-            Header()
-            //AlphabetScreen(modifier = Modifier.weight(1f))
-            HomeScreen(modifier = Modifier.weight(1f))
-        }
+        val bottomBarState = rememberSaveable { (mutableStateOf(true)) }
+        val navController = rememberNavController()
+        val navBackStackEntry by navController.currentBackStackEntryAsState()
+        Scaffold(
+            topBar = {
+                     Header()
+            },
+            bottomBar = {
+                BottomNavigationBar(
+                    navController = navController,
+                    bottomBarState = bottomBarState
+                )
+            },
+            content = {
+                SetupNavGraph(navHostController = navController, Modifier.padding(it))
+            })
 
+
+    }
+
+    @Composable
+    private fun SetupNavGraph(navHostController: NavHostController, modif: Modifier) {
+        Column(modif.background(BackroundColor)) {
+        //    Header()
+            NavHost(
+                navController = navHostController,
+                startDestination = NavigationItem.Home.route
+            ) {
+                composable(NavigationItem.Home.route) {
+                    HomeScreen(modifier = Modifier.weight(1f))
+                }
+                composable(NavigationItem.List .route) {
+                    AlphabetScreen(modifier = Modifier.weight(1f))
+                }
+                composable(NavigationItem.Discover.route) {
+                    DiscoverScreen()
+                }
+                composable(NavigationItem.History.route) {
+                    HistoryBookmark()
+                }
+
+                composable(NavigationItem.Setting.route) {
+                    SettingScreen()
+                }
+            }
+            /* AlphabetScreen(modifier = Modifier.weight(1f))
+                        HomeScreen(modifier = Modifier.weight(1f))*/
+        }
     }
 }
 
@@ -55,7 +109,7 @@ class MainActivity : BaseActivity() {
 @Composable
 fun Header() {
     Row(
-        modifier = Modifier
+        modifier = Modifier .background(BackroundColor)
             .padding(vertical = 10.dp, horizontal = 10.dp)
             .fillMaxWidth(),
         verticalAlignment = Alignment.CenterVertically
@@ -67,8 +121,10 @@ fun Header() {
             AsyncImage(model = R.drawable.ic_small_app, contentDescription = null)
             //  Icon(painter = painterResource(id = R.drawable.ic_small_app), contentDescription =null )
         }
-        Row(modifier = Modifier.wrapContentSize(),
-            verticalAlignment = Alignment.CenterVertically) {
+        Row(
+            modifier = Modifier.wrapContentSize(),
+            verticalAlignment = Alignment.CenterVertically
+        ) {
             Icon(painter = painterResource(id = R.drawable.ic_search), contentDescription = null)
             Spacer(modifier = Modifier.width(5.dp))
             Icon(painter = painterResource(id = R.drawable.ic_notif), contentDescription = null)
@@ -80,6 +136,45 @@ fun Header() {
         }
 
     }
+}
+
+@Composable
+fun BottomNavigationBar(navController: NavController, bottomBarState: MutableState<Boolean>) {
+    val navBackStackEntry by navController.currentBackStackEntryAsState()
+    val currentRoute = navBackStackEntry?.destination?.route
+
+    val items = listOf(
+        NavigationItem.Home,
+        NavigationItem.List,
+        NavigationItem.Discover,
+        NavigationItem.History,
+        NavigationItem.Setting
+    )
+
+    BottomAppBar {
+
+        items.forEach { item ->
+            NavigationBarItem(
+                icon = { Icon(painterResource(id = item.icon), modifier = Modifier.size(25.dp), contentDescription = item.title) },
+                label = { Text(text = item.title) },
+                alwaysShowLabel = false,
+                selected = currentRoute == item.route,
+
+                colors = NavigationBarItemDefaults.colors(unselectedIconColor = ColorButtonRefreshReadChapter,
+                    unselectedTextColor = ColorButtonRefreshReadChapter, selectedTextColor = primaryColor, selectedIconColor = primaryColor),
+                onClick = {
+                    navController.navigate(item.route)
+                    /* Add code later */
+                }
+            )
+        }
+    }
+}
+
+@Preview(showBackground = true)
+@Composable
+fun BottomNavigationBarPreview() {
+
 }
 
 @Composable
