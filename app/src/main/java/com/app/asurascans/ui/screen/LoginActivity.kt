@@ -36,7 +36,6 @@ import com.app.asurascans.ui.theme.primaryColor
 import com.ireward.htmlcompose.HtmlText
 
 class LoginActivity : BaseActivity() {
-    @OptIn(ExperimentalMaterial3Api::class)
     @Composable
     override fun ScreenContent() {
         LoginContent()
