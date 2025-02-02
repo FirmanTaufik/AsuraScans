@@ -14,6 +14,7 @@ import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material3.Card
 import androidx.compose.material3.CardColors
 import androidx.compose.material3.CardDefaults
+import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Alignment
@@ -47,7 +48,7 @@ fun TopSliderItem(modifier: Modifier = Modifier) {
                 modifier = Modifier
                     .fillMaxSize() ,
                 shape = RoundedCornerShape(7.dp),
-                colors = CardDefaults.cardColors(contentColor = grayColor)
+                colors = CardDefaults.cardColors(containerColor = MaterialTheme.colorScheme.surface)
             ) {
                 Box (modifier = Modifier.fillMaxSize()){
 

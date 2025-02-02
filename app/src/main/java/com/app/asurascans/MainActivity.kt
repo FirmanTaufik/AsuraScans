@@ -60,8 +60,6 @@ class MainActivity : BaseActivity() {
         val navBackStackEntry by navController.currentBackStackEntryAsState()
         val currentRoute = navBackStackEntry?.destination?.route
 
-
-
         val items = listOf(
             NavigationItem.Home,
             NavigationItem.List,
@@ -84,11 +82,11 @@ class MainActivity : BaseActivity() {
                 SetupNavGraph(navHostController = navController, Modifier.padding(it))
             },
             floatingActionButton = {
-                AnimatedVisibility(visible = currentRoute == NavigationItem.Home.route) {
+                AnimatedVisibility(visible = currentRoute== items.first().route) {
                     IconButton(
                         onClick = { /*TODO*/ },
                         modifier = Modifier
-                            .size(70.dp),
+                            .size(60.dp),
                         colors = IconButtonDefaults.iconButtonColors(
                             contentColor = ColorBlack,
                             containerColor = primaryColor
@@ -98,7 +96,7 @@ class MainActivity : BaseActivity() {
                             painter = painterResource(id = R.drawable.ic_refresh),
                             contentDescription = null,
                             tint = ColorBlack,
-                            modifier = Modifier.size(50.dp)
+                            modifier = Modifier.size(40.dp)
                         )
                     }
                 }

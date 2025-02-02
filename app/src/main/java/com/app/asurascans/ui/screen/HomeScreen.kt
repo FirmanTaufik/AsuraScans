@@ -58,7 +58,7 @@ fun HomeScreen(modifier: Modifier = Modifier) {
                 Divider()
                 Spacer(modifier = Modifier.height(5.dp))
                 TopSlider()
-                Spacer(modifier = Modifier.height(5.dp))
+                Spacer(modifier = Modifier.height(15.dp))
                 BottomSlider()
                 Spacer(modifier = Modifier.height(15.dp))
                 MostView(Modifier)
@@ -109,7 +109,6 @@ fun LatestUpdateItemsGrid() {
 private fun MostView(modifier: Modifier = Modifier) {
     val listTop = stringArrayResource(id = R.array.list_type_home_top)
     val scrollStateRowMostView = rememberLazyListState()
-    val scrollStateColumn = rememberScrollState()
     Row(
         modifier = modifier
             .fillMaxWidth()
@@ -135,7 +134,7 @@ private fun MostView(modifier: Modifier = Modifier) {
     LazyRow(
         modifier = Modifier.fillMaxWidth(),
         state = scrollStateRowMostView,
-        contentPadding = PaddingValues(15.dp)
+        contentPadding = PaddingValues(horizontal = 15.dp)
     ) {
         items(10) {
             MostViewItem()
