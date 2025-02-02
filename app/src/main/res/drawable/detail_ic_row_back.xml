@@ -3,10 +3,10 @@
     android:height="75dp"
     android:viewportWidth="75"
     android:viewportHeight="75">
-  <path
+  <!--<path
       android:pathData="M37.5,37.5m-37.5,0a37.5,37.5 0,1 1,75 0a37.5,37.5 0,1 1,-75 0"
       android:fillColor="#1A1A1A"
-      android:fillAlpha="0.64"/>
+      android:fillAlpha="0.64"/>-->
   <path
       android:pathData="M17.586,35.586C16.805,36.367 16.805,37.633 17.586,38.414L30.314,51.142C31.095,51.923 32.361,51.923 33.142,51.142C33.923,50.361 33.923,49.095 33.142,48.314L21.828,37L33.142,25.686C33.923,24.905 33.923,23.639 33.142,22.858C32.361,22.077 31.095,22.077 30.314,22.858L17.586,35.586ZM55,35L19,35V39L55,39V35Z"
       android:fillColor="#ffffff"/>

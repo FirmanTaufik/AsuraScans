@@ -52,7 +52,7 @@ class ReadActivity : BaseActivity() {
                     .background(color = Color.Black),
                 verticalAlignment = Alignment.CenterVertically
             ) {
-                IconButton(onClick = { /*TODO*/ }) {
+                IconButton(onClick = { finish() }) {
                     Icon(
                         painter = painterResource(id = R.drawable.ic_arrow_back),
                         contentDescription = null
