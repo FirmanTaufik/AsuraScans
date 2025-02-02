@@ -4,6 +4,7 @@ import androidx.compose.foundation.Image
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
+import androidx.compose.foundation.layout.PaddingValues
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxHeight
@@ -48,7 +49,7 @@ import com.app.asurascans.ui.item.TopSliderItem
 fun HomeScreen(modifier: Modifier = Modifier) {
 
     val state = rememberLazyListState()
-    var isGridLatestupdate by remember {  mutableStateOf(true)   }
+    var isGridLatestupdate by remember { mutableStateOf(true) }
 
     LazyColumn(state = state) {
         item {
@@ -60,13 +61,13 @@ fun HomeScreen(modifier: Modifier = Modifier) {
                 Spacer(modifier = Modifier.height(5.dp))
                 BottomSlider()
                 Spacer(modifier = Modifier.height(15.dp))
-                MostView()
+                MostView(Modifier)
                 Spacer(modifier = Modifier.height(15.dp))
             }
         }
 
         item {
-            LatestUpdateHeader{
+            LatestUpdateHeader {
                 isGridLatestupdate = it
             }
         }
@@ -76,8 +77,8 @@ fun HomeScreen(modifier: Modifier = Modifier) {
             item {
                 LatestUpdateItemsGrid()
             }
-        }else{
-            items(10){
+        } else {
+            items(10) {
                 LastUpdateListItem()
             }
         }
@@ -110,9 +111,9 @@ private fun MostView(modifier: Modifier = Modifier) {
     val scrollStateRowMostView = rememberLazyListState()
     val scrollStateColumn = rememberScrollState()
     Row(
-        modifier = Modifier
+        modifier = modifier
             .fillMaxWidth()
-            .padding(horizontal = 5.dp),
+            .padding(horizontal = 15.dp),
         verticalAlignment = Alignment.CenterVertically
     ) {
         Text(
@@ -120,7 +121,9 @@ private fun MostView(modifier: Modifier = Modifier) {
             modifier = Modifier.weight(1f), fontWeight = FontWeight.Bold,
             fontSize = 18.sp
         )
-        LazyRow(modifier = Modifier.wrapContentSize()) {
+        LazyRow(
+            modifier = Modifier.wrapContentSize(),
+        ) {
             itemsIndexed(listTop) { i, value ->
                 TextSelectedItem(value)
             }
@@ -131,7 +134,8 @@ private fun MostView(modifier: Modifier = Modifier) {
 
     LazyRow(
         modifier = Modifier.fillMaxWidth(),
-        state = scrollStateRowMostView
+        state = scrollStateRowMostView,
+        contentPadding = PaddingValues(15.dp)
     ) {
         items(10) {
             MostViewItem()
@@ -141,7 +145,7 @@ private fun MostView(modifier: Modifier = Modifier) {
 
 
 @Composable
-private fun LatestUpdateHeader(onChangeList : (Boolean)->Unit) {
+private fun LatestUpdateHeader(onChangeList: (Boolean) -> Unit) {
     rememberLazyListState()
     val listBottom = stringArrayResource(id = R.array.list_type_home_bottom)
     Text(
@@ -150,7 +154,11 @@ private fun LatestUpdateHeader(onChangeList : (Boolean)->Unit) {
         fontSize = 18.sp
     )
 
-    Row(modifier = Modifier.fillMaxWidth()) {
+    Row(
+        modifier = Modifier
+            .fillMaxWidth()
+            .padding(horizontal = 15.dp)
+    ) {
         LazyRow(modifier = Modifier.weight(1f)) {
             itemsIndexed(listBottom) { i, value ->
                 TextSelectedItem(value)
@@ -186,8 +194,12 @@ fun TopSlider(modifier: Modifier = Modifier) {
             .fillMaxWidth()
             .height(150.dp)
     ) {
-        Box(modifier = Modifier.padding(horizontal = 10.dp)) {
-            TopSliderItem()
+        LazyRow {
+            items(5) {
+                Box(modifier = Modifier.padding(horizontal = 10.dp)) {
+                    TopSliderItem()
+                }
+            }
         }
         Box(
             modifier = Modifier

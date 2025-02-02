@@ -268,7 +268,7 @@ fun DiscoverScreen() {
                 Spacer(modifier = Modifier.height(10.dp))
                 Text(
                     text = "*yang perlu diisi cuma satu form, terlalu banyak form yang diisi bisa kosong hasil\n" +
-                            "pencariannya", color = ColorWhite, fontSize = 18.sp
+                            "pencariannya", color = ColorWhite, fontSize = 13.sp
                 )
             }
         }

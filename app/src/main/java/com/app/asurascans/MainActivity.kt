@@ -1,6 +1,7 @@
 package com.app.asurascans
 
 import android.annotation.SuppressLint
+import androidx.compose.animation.AnimatedVisibility
 import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
@@ -20,15 +21,16 @@ import androidx.compose.material3.NavigationBarItemDefaults
 import androidx.compose.material3.Scaffold
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
-import androidx.compose.runtime.MutableState
 import androidx.compose.runtime.getValue
-import androidx.compose.runtime.mutableStateOf
-import androidx.compose.runtime.saveable.rememberSaveable
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.res.painterResource
+import androidx.compose.ui.text.font.FontWeight
+import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
+import androidx.compose.ui.unit.sp
 import androidx.navigation.NavController
 import androidx.navigation.NavHostController
 import androidx.navigation.compose.NavHost
@@ -47,48 +49,58 @@ import com.app.asurascans.ui.theme.AsuraScansTheme
 import com.app.asurascans.ui.theme.BackroundColor
 import com.app.asurascans.ui.theme.ColorBlack
 import com.app.asurascans.ui.theme.ColorButtonRefreshReadChapter
-import com.app.asurascans.ui.theme.ColorNav
-import com.app.asurascans.ui.theme.ColorWhite
 import com.app.asurascans.ui.theme.primaryColor
-import com.app.asurascans.ui.theme.primaryColorSelected
 
 class MainActivity : BaseActivity() {
 
     @SuppressLint("UnusedMaterial3ScaffoldPaddingParameter")
     @Composable
     override fun ScreenContent() {
-        val bottomBarState = rememberSaveable { (mutableStateOf(true)) }
         val navController = rememberNavController()
         val navBackStackEntry by navController.currentBackStackEntryAsState()
+        val currentRoute = navBackStackEntry?.destination?.route
+
+
+
+        val items = listOf(
+            NavigationItem.Home,
+            NavigationItem.List,
+            NavigationItem.Discover,
+            NavigationItem.History,
+            NavigationItem.Setting
+        )
+
         Scaffold(
             topBar = {
-                     Header()
+                Header(currentRoute,items)
             },
             bottomBar = {
                 BottomNavigationBar(
                     navController = navController,
-                    bottomBarState = bottomBarState
+                    currentRoute,items
                 )
             },
             content = {
                 SetupNavGraph(navHostController = navController, Modifier.padding(it))
             },
             floatingActionButton = {
-                IconButton(
-                    onClick = { /*TODO*/ },
-                    modifier = Modifier
-                        .size(70.dp),
-                    colors = IconButtonDefaults.iconButtonColors(
-                        contentColor = ColorBlack,
-                        containerColor = primaryColor
-                    )
-                ) {
-                    Icon(
-                        painter = painterResource(id = R.drawable.ic_refresh),
-                        contentDescription = null,
-                        tint = ColorBlack,
-                        modifier = Modifier.size(50.dp)
-                    )
+                AnimatedVisibility(visible = currentRoute == NavigationItem.Home.route) {
+                    IconButton(
+                        onClick = { /*TODO*/ },
+                        modifier = Modifier
+                            .size(70.dp),
+                        colors = IconButtonDefaults.iconButtonColors(
+                            contentColor = ColorBlack,
+                            containerColor = primaryColor
+                        )
+                    ) {
+                        Icon(
+                            painter = painterResource(id = R.drawable.ic_refresh),
+                            contentDescription = null,
+                            tint = ColorBlack,
+                            modifier = Modifier.size(50.dp)
+                        )
+                    }
                 }
             })
 
@@ -128,20 +140,30 @@ class MainActivity : BaseActivity() {
 
 
 @Composable
-fun Header() {
+private fun Header(currentRoute: String?, items: List<NavigationItem>) {
     Row(
-        modifier = Modifier .background(BackroundColor)
+        modifier = Modifier
+            .background(BackroundColor)
             .padding(vertical = 10.dp, horizontal = 10.dp)
             .fillMaxWidth(),
         verticalAlignment = Alignment.CenterVertically
     ) {
         Box(
             modifier = Modifier
-                .weight(1f)
+                .wrapContentSize()
         ) {
             AsyncImage(model = R.drawable.ic_small_app, contentDescription = null)
             //  Icon(painter = painterResource(id = R.drawable.ic_small_app), contentDescription =null )
         }
+
+        val name  =  items.find { it.route == currentRoute }?.title
+
+        Text(text = name ?: "", color = Color.White,
+            modifier = Modifier
+                .weight(1f),
+            textAlign = TextAlign.Center,
+            fontSize = 23.sp, fontWeight = FontWeight.Bold)
+
         Row(
             modifier = Modifier.wrapContentSize(),
             verticalAlignment = Alignment.CenterVertically
@@ -160,17 +182,11 @@ fun Header() {
 }
 
 @Composable
-fun BottomNavigationBar(navController: NavController, bottomBarState: MutableState<Boolean>) {
-    val navBackStackEntry by navController.currentBackStackEntryAsState()
-    val currentRoute = navBackStackEntry?.destination?.route
-
-    val items = listOf(
-        NavigationItem.Home,
-        NavigationItem.List,
-        NavigationItem.Discover,
-        NavigationItem.History,
-        NavigationItem.Setting
-    )
+fun BottomNavigationBar(
+    navController: NavController,
+    currentRoute: String?,
+    items: List<NavigationItem>
+) {
 
     BottomAppBar {
 

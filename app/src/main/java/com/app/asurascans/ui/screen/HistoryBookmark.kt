@@ -62,7 +62,7 @@ fun HistoryBookmark(modifier: Modifier = Modifier) {
                     colors = ButtonDefaults.buttonColors(containerColor =if (!isBookmark) primaryColor else ColorNav  ),
                     modifier = Modifier
                         .weight(1f)
-                        .height(60.dp),
+                        .height(50.dp),
                     shape = RoundedCornerShape(5.dp)
                 ) {
                     Text(
@@ -80,7 +80,7 @@ fun HistoryBookmark(modifier: Modifier = Modifier) {
                     colors = ButtonDefaults.buttonColors(containerColor = if (isBookmark) primaryColor else ColorNav),
                     modifier = Modifier
                         .weight(1f)
-                        .height(60.dp),
+                        .height(50.dp),
                     shape = RoundedCornerShape(5.dp)
                 ) {
                     Text(
