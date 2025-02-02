@@ -1,5 +1,6 @@
 package com.app.asurascans.ui.screen
 
+import android.content.Intent
 import androidx.compose.foundation.Image
 import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.Box
@@ -21,6 +22,7 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.layout.ContentScale
+import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.font.FontWeight
@@ -28,6 +30,7 @@ import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
+import com.app.asurascans.MainActivity
 import com.app.asurascans.R
 import com.app.asurascans.core.BaseActivity
 import com.app.asurascans.ui.theme.BackroundColor
@@ -46,6 +49,7 @@ class LoginActivity : BaseActivity() {
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
 fun LoginContent(modifier: Modifier = Modifier) {
+    val context = LocalContext.current
     Column(
         modifier = Modifier.fillMaxSize()
             .background(color = BackroundColor),
@@ -76,7 +80,9 @@ fun LoginContent(modifier: Modifier = Modifier) {
             Spacer(modifier = Modifier.height(20.dp))
             HtmlText(text = stringResource(id = R.string.login_intruction))
             Card(
-                onClick = { /*TODO*/ },
+                onClick = {
+                          context.startActivity(Intent(context, MainActivity::class.java))
+                          },
                 colors = CardDefaults.cardColors(
                     containerColor = primaryColor,
                     contentColor = primaryColor
