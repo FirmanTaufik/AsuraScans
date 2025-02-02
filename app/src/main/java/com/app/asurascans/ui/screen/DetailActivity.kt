@@ -141,7 +141,7 @@ class DetailActivity : BaseActivity() {
                         ListChapterArea()
                         Spacer(modifier = Modifier.height(15.dp))
                     }
-                    items(10){
+                    items(1000){
                         ChapterDetailItem()
                     }
                 }

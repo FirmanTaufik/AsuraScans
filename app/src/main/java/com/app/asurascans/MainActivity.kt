@@ -13,6 +13,8 @@ import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.layout.wrapContentSize
 import androidx.compose.material3.BottomAppBar
 import androidx.compose.material3.Icon
+import androidx.compose.material3.IconButton
+import androidx.compose.material3.IconButtonDefaults
 import androidx.compose.material3.NavigationBarItem
 import androidx.compose.material3.NavigationBarItemDefaults
 import androidx.compose.material3.Scaffold
@@ -43,6 +45,7 @@ import com.app.asurascans.ui.screen.HomeScreen
 import com.app.asurascans.ui.screen.SettingScreen
 import com.app.asurascans.ui.theme.AsuraScansTheme
 import com.app.asurascans.ui.theme.BackroundColor
+import com.app.asurascans.ui.theme.ColorBlack
 import com.app.asurascans.ui.theme.ColorButtonRefreshReadChapter
 import com.app.asurascans.ui.theme.ColorNav
 import com.app.asurascans.ui.theme.ColorWhite
@@ -69,6 +72,24 @@ class MainActivity : BaseActivity() {
             },
             content = {
                 SetupNavGraph(navHostController = navController, Modifier.padding(it))
+            },
+            floatingActionButton = {
+                IconButton(
+                    onClick = { /*TODO*/ },
+                    modifier = Modifier
+                        .size(70.dp),
+                    colors = IconButtonDefaults.iconButtonColors(
+                        contentColor = ColorBlack,
+                        containerColor = primaryColor
+                    )
+                ) {
+                    Icon(
+                        painter = painterResource(id = R.drawable.ic_refresh),
+                        contentDescription = null,
+                        tint = ColorBlack,
+                        modifier = Modifier.size(50.dp)
+                    )
+                }
             })
 
 
