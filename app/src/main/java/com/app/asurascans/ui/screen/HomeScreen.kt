@@ -2,12 +2,17 @@ package com.app.asurascans.ui.screen
 
 import androidx.compose.foundation.Image
 import androidx.compose.foundation.clickable
+import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
+import androidx.compose.foundation.layout.ExperimentalLayoutApi
+import androidx.compose.foundation.layout.FlowColumn
+import androidx.compose.foundation.layout.FlowRow
 import androidx.compose.foundation.layout.PaddingValues
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxHeight
+import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
@@ -16,9 +21,13 @@ import androidx.compose.foundation.layout.wrapContentSize
 import androidx.compose.foundation.layout.wrapContentWidth
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.LazyRow
+import androidx.compose.foundation.lazy.grid.GridCells
+import androidx.compose.foundation.lazy.grid.LazyVerticalGrid
 import androidx.compose.foundation.lazy.itemsIndexed
 import androidx.compose.foundation.lazy.rememberLazyListState
 import androidx.compose.foundation.rememberScrollState
+import androidx.compose.material3.Button
+import androidx.compose.material3.ButtonDefaults
 import androidx.compose.material3.Divider
 import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.Text
@@ -34,6 +43,7 @@ import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.res.stringArrayResource
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.font.FontWeight
+import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import com.app.asurascans.R
@@ -43,6 +53,8 @@ import com.app.asurascans.ui.item.LastUpdateListItem
 import com.app.asurascans.ui.item.MostViewItem
 import com.app.asurascans.ui.item.TextSelectedItem
 import com.app.asurascans.ui.item.TopSliderItem
+import com.app.asurascans.ui.theme.ColorBlack
+import com.app.asurascans.ui.theme.primaryColor
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
@@ -51,7 +63,8 @@ fun HomeScreen(modifier: Modifier = Modifier) {
     val state = rememberLazyListState()
     var isGridLatestupdate by remember { mutableStateOf(true) }
 
-    LazyColumn(state = state) {
+    LazyColumn(state = state,
+        horizontalAlignment = Alignment.CenterHorizontally) {
         item {
             Column(modifier = modifier.wrapContentSize()) {
                 Spacer(modifier = Modifier.height(5.dp))
@@ -87,18 +100,74 @@ fun HomeScreen(modifier: Modifier = Modifier) {
             Spacer(modifier = Modifier.height(15.dp))
         }
 
+        item {
+            Button(
+                onClick = { /*TODO*/ },
+                colors = ButtonDefaults.buttonColors(containerColor = primaryColor)
+            ) {
+                Text(
+                    text = "Lihat lebih banyak komik", color = ColorBlack, fontWeight = FontWeight.Bold,
+                    fontSize = 18.sp
+                )
+            }
+        }
+
+        item {
+            Spacer(modifier = Modifier.height(15.dp))
+        }
+
+        item {
+            Column {
+                NewLatestadded()
+                Spacer(modifier = Modifier.height(15.dp))
+            }
+        }
+
     }
 
 }
 
 @Composable
+fun NewLatestadded() {
+   Row (modifier = Modifier.fillMaxWidth(),
+       verticalAlignment = Alignment.CenterVertically,
+       horizontalArrangement = Arrangement.SpaceBetween){
+       Text(
+           text = stringResource(id = R.string.most_view),
+           modifier = Modifier.weight(1f), fontWeight = FontWeight.Bold,
+           fontSize = 18.sp
+       )
+
+       Button(
+           onClick = { /*TODO*/ },
+           colors = ButtonDefaults.buttonColors(containerColor = primaryColor)
+       ) {
+           Text(
+               text = "More", color = ColorBlack, fontWeight = FontWeight.Bold,
+               fontSize = 18.sp
+           )
+       }
+   }
+
+    Spacer(modifier = Modifier.height(15.dp))
+
+    LazyRow (modifier = Modifier.fillMaxWidth()){
+        items(10){
+            LastUpdateGridItem(showChapter = false)
+        }
+    }
+}
+
+@OptIn(ExperimentalLayoutApi::class)
+@Composable
 fun LatestUpdateItemsGrid() {
     val scrollStateLatestUpdate = rememberLazyListState()
-    LazyRow(
-        modifier = Modifier.fillMaxWidth(),
-        state = scrollStateLatestUpdate
+
+    FlowRow(
+        maxItemsInEachRow = 3,
+        modifier = Modifier.fillMaxSize(),
     ) {
-        items(10) {
+        for (i in 0 until 10) {
             LastUpdateGridItem()
         }
     }
@@ -149,8 +218,11 @@ private fun LatestUpdateHeader(onChangeList: (Boolean) -> Unit) {
     val listBottom = stringArrayResource(id = R.array.list_type_home_bottom)
     Text(
         text = stringResource(id = R.string.last_update),
-        modifier = Modifier.wrapContentSize(), fontWeight = FontWeight.Bold,
-        fontSize = 18.sp
+        modifier = Modifier
+            .fillMaxWidth()
+            .padding(start = 10.dp), fontWeight = FontWeight.Bold,
+        fontSize = 18.sp,
+        textAlign = TextAlign.Left
     )
 
     Row(
@@ -195,7 +267,7 @@ fun TopSlider(modifier: Modifier = Modifier) {
     ) {
         LazyRow {
             items(5) {
-                Box(modifier = Modifier.padding(horizontal = 10.dp)) {
+                Box(modifier = Modifier.padding(start = 10.dp, end = 20.dp)) {
                     TopSliderItem()
                 }
             }

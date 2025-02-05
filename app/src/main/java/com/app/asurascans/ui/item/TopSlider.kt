@@ -21,6 +21,7 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
+import com.app.asurascans.helper.getDeviceWidthInDp
 import com.app.asurascans.ui.theme.ColorIcon
 import com.app.asurascans.ui.theme.grayColor
 import com.app.asurascans.ui.theme.primaryColor
@@ -30,8 +31,8 @@ import com.app.asurascans.ui.theme.primaryColorSelected
 fun TopSliderItem(modifier: Modifier = Modifier) {
     Box(
         modifier = Modifier
-            .padding(horizontal = 10.dp)
-            .width(320.dp)
+            .padding(horizontal = 5.dp)
+            .width((getDeviceWidthInDp()-30) .dp)
     ) {
         Card(
             modifier = Modifier.fillMaxSize(),

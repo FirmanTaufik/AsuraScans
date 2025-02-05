@@ -39,6 +39,7 @@ import androidx.navigation.compose.currentBackStackEntryAsState
 import androidx.navigation.compose.rememberNavController
 import coil.compose.AsyncImage
 import com.app.asurascans.core.BaseActivity
+import com.app.asurascans.helper.tittleBoard
 import com.app.asurascans.ui.navigation.NavigationItem
 import com.app.asurascans.ui.screen.AlphabetScreen
 import com.app.asurascans.ui.screen.DiscoverScreen
@@ -156,11 +157,13 @@ private fun Header(currentRoute: String?, items: List<NavigationItem>) {
 
         val name  =  items.find { it.route == currentRoute }?.title
 
-        Text(text = name ?: "", color = Color.White,
+        tittleBoard(name ?: "", Modifier.weight(1f))
+
+       /* Text(text = name ?: "", color = Color.White,
             modifier = Modifier
                 .weight(1f),
             textAlign = TextAlign.Center,
-            fontSize = 23.sp, fontWeight = FontWeight.Bold)
+            fontSize = 23.sp, fontWeight = FontWeight.Bold)*/
 
         Row(
             modifier = Modifier.wrapContentSize(),

@@ -42,6 +42,7 @@ import androidx.compose.runtime.Composable
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
+import androidx.compose.ui.geometry.Offset
 import androidx.compose.ui.graphics.Brush
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.layout.ContentScale
@@ -446,10 +447,14 @@ class DetailActivity : BaseActivity() {
 
     @Composable
     private fun GenreSlider() {
-        Box(modifier = Modifier.fillMaxWidth()) {
+        Box(modifier = Modifier
+            .fillMaxWidth()
+            .height(50.dp)) {
 
             LazyRow(
-                modifier = Modifier.fillMaxWidth(),
+                modifier = Modifier
+                    .fillMaxWidth()
+                    .align(alignment = Alignment.Center),
                 contentPadding = PaddingValues(5.dp)
             ) {
                 items(10) {
@@ -465,36 +470,72 @@ class DetailActivity : BaseActivity() {
                 }
             }
 
-            IconButton(
-                onClick = { /*TODO*/ },
+            Row(
                 modifier = Modifier
-                    .size(30.dp)
-                    .align(Alignment.CenterStart),
-                colors = IconButtonDefaults.iconButtonColors(
-                    contentColor = ColorBlack,
-                    containerColor = ColorIcon
-                )
-            ) {
-                Icon(
-                    painter = painterResource(id = R.drawable.ic_arrow_left_genre),
-                    contentDescription = null
-                )
+                    .width(width = 200.dp)
+                    .height(150.dp)
+                    .align(Alignment.CenterStart)
+                    .background(
+                        brush = Brush.linearGradient(
+                            colors = listOf(ColorBlack, Color.Transparent),
+                            start = Offset(0f, 0f),  // Starting point of the gradient (left)
+                            end = Offset(Float.POSITIVE_INFINITY, 0f) // Ending point (right)
+                        )
+                    ),
+                horizontalArrangement = Arrangement.Start,
+                verticalAlignment = Alignment.CenterVertically
+            ){
+
+                Spacer(modifier = Modifier.width(15.dp))
+                IconButton(
+                    onClick = { /*TODO*/ },
+                    modifier = Modifier
+                        .size(30.dp),
+                    colors = IconButtonDefaults.iconButtonColors(
+                        contentColor = ColorBlack,
+                        containerColor = ColorIcon
+                    )
+                ) {
+                    Icon(
+                        painter = painterResource(id = R.drawable.ic_arrow_left_genre),
+                        contentDescription = null
+                    )
+                }
             }
-            IconButton(
-                onClick = { /*TODO*/ },
+
+            Row(
                 modifier = Modifier
+                    .width(width = 200.dp)
+                    .height(150.dp)
                     .align(Alignment.CenterEnd)
-                    .size(30.dp)
-                    .align(Alignment.TopEnd),
-                colors = IconButtonDefaults.iconButtonColors(
-                    contentColor = ColorBlack,
-                    containerColor = ColorIcon
-                )
-            ) {
-                Icon(
-                    painter = painterResource(id = R.drawable.ic_arrow_right_genre),
-                    contentDescription = null
-                )
+                    .background(
+                        brush = Brush.linearGradient(
+                            colors = listOf(ColorBlack, Color.Transparent),
+                            start = Offset(
+                                Float.POSITIVE_INFINITY,
+                                0f
+                            ),  // Starting point of the gradient (left)
+                            end = Offset(0f, 0f) // Ending point (right)
+                        )
+                    ),
+                horizontalArrangement = Arrangement.End,
+                verticalAlignment = Alignment.CenterVertically
+            ){
+                IconButton(
+                    onClick = { /*TODO*/ },
+                    modifier = Modifier
+                        .size(30.dp),
+                    colors = IconButtonDefaults.iconButtonColors(
+                        contentColor = ColorBlack,
+                        containerColor = ColorIcon
+                    )
+                ) {
+                    Icon(
+                        painter = painterResource(id = R.drawable.ic_arrow_right_genre),
+                        contentDescription = null
+                    )
+                }
+                Spacer(modifier = Modifier.width(15.dp))
             }
         }
     }
