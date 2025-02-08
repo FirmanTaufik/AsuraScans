@@ -169,13 +169,19 @@ private fun Header(currentRoute: String?, items: List<NavigationItem>) {
             modifier = Modifier.wrapContentSize(),
             verticalAlignment = Alignment.CenterVertically
         ) {
-            Icon(painter = painterResource(id = R.drawable.ic_search), contentDescription = null)
+            IconButton(onClick = { /*TODO*/ },
+                modifier = Modifier.size(25.dp)) {
+                Icon(painter = painterResource(id = R.drawable.ic_search), contentDescription = null)
+            }
             Spacer(modifier = Modifier.width(5.dp))
-            Icon(painter = painterResource(id = R.drawable.ic_notif), contentDescription = null)
+            IconButton(onClick = { /*TODO*/ },
+                modifier = Modifier.size(25.dp)) {
+                Icon(painter = painterResource(id = R.drawable.ic_notif), contentDescription = null)
+            }
             Spacer(modifier = Modifier.width(5.dp))
             AsyncImage(
                 model = R.drawable.ic_person, contentDescription = null,
-                modifier = Modifier.size(30.dp)
+                modifier = Modifier.size(35.dp)
             )
         }
 

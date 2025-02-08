@@ -9,6 +9,7 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.platform.LocalConfiguration
+import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.sp
@@ -38,4 +39,13 @@ fun tittleBoard(title:String, modifier: Modifier) {
            textAlign = TextAlign.Center,
            fontSize = 23.sp, fontWeight = FontWeight.Bold)
     }
+}
+
+@Composable
+fun getContext()  = LocalContext.current
+
+@Composable
+fun startNewActivity() {
+    val context = LocalContext.current
+
 }

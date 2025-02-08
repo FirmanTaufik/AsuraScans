@@ -33,6 +33,7 @@ import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import coil.compose.AsyncImage
 import com.app.asurascans.R
+import com.app.asurascans.helper.startNewActivity
 import com.app.asurascans.ui.screen.DetailActivity
 import com.app.asurascans.ui.theme.BackroundColor
 import com.app.asurascans.ui.theme.ColorTransparent
