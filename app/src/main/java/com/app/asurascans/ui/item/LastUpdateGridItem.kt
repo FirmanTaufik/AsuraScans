@@ -10,6 +10,7 @@ import androidx.compose.foundation.layout.IntrinsicSize
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxHeight
+import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
@@ -44,7 +45,7 @@ import com.app.asurascans.ui.theme.ColorTransparent
 fun LastUpdateGridItem(modifier: Modifier = Modifier, showChapter : Boolean ?= true) {
     Column(
         modifier = Modifier
-            .width((getDeviceWidthInDp() / 3).dp)
+            .width((getDeviceWidthInDp() / 3.1).dp)
             .wrapContentHeight()
             .padding(horizontal = 5.dp,),
         horizontalAlignment = Alignment.CenterHorizontally
@@ -121,7 +122,7 @@ fun LastUpdateGridItem(modifier: Modifier = Modifier, showChapter : Boolean ?= t
             if (showChapter == true) {
                 Column(
                     modifier = Modifier
-                        .wrapContentSize()
+                        .fillMaxSize()
                         .background(
                             brush = Brush.verticalGradient(
                                 colors = listOf(ColorTransparent, Color.Black)
@@ -145,14 +146,14 @@ fun LastUpdateGridItem(modifier: Modifier = Modifier, showChapter : Boolean ?= t
                         ) {
                             Text(
                                 text = "CH 69", color = Color.White,
-                                fontSize = 15.sp, maxLines = 1,
+                                fontSize = 13.sp, maxLines = 1,
                                 overflow = TextOverflow.Ellipsis
                             )
                         }
 
                         Text(
                             text = "1 menit", color = Color.White,
-                            fontSize = 15.sp
+                            fontSize = 13.sp
                         )
                     }
 
@@ -171,8 +172,8 @@ fun LastUpdateGridItem(modifier: Modifier = Modifier, showChapter : Boolean ?= t
                                 .background(color = ColorTransparent, shape = RoundedCornerShape(4.dp))
                         ) {
                             Text(
-                                text = "CH 6009", color = Color.White,
-                                fontSize = 15.sp, maxLines = 1,
+                                text = "CH 609", color = Color.White,
+                                fontSize = 13.sp, maxLines = 1,
                                 overflow = TextOverflow.Ellipsis
                             )
                         }

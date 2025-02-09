@@ -13,6 +13,7 @@ import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
+import androidx.compose.foundation.layout.imePadding
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.layout.width
@@ -94,7 +95,7 @@ class DetailActivity : BaseActivity() {
                 )
             }
         }) {
-            Box(modifier = Modifier) {
+            Box(modifier = Modifier.imePadding()) {
                 AsyncImage(
                     model = "https://imgsrv.crunchyroll.com/cdn-cgi/image/fit=contain,format=auto,quality=85,width=480,height=720/catalog/crunchyroll/323c82257b2f6567fabbb7bd55bfa753.jpg",
                     contentDescription = null,
@@ -258,7 +259,8 @@ class DetailActivity : BaseActivity() {
     private fun ListChapterArea() {
         Column {
             Row(
-                modifier = Modifier.fillMaxWidth(),
+                modifier = Modifier.fillMaxWidth()
+                    .padding(horizontal = 15.dp),
                 horizontalArrangement = Arrangement.SpaceBetween
             ) {
                 Button(
@@ -292,6 +294,7 @@ class DetailActivity : BaseActivity() {
     private fun HiglightComment() {
         Box(
             modifier = Modifier
+                .padding(horizontal = 15.dp)
                 .fillMaxWidth()
                 .height(200.dp)
         ) {

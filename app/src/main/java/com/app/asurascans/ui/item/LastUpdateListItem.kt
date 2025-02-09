@@ -44,7 +44,7 @@ fun LastUpdateListItem(modifier: Modifier = Modifier) {
     Box(
         modifier = Modifier
             .wrapContentSize()
-            .padding(10.dp)
+            .padding(vertical = 10.dp, horizontal = 13.dp)
     ) {
         Box(
             modifier = Modifier
@@ -149,25 +149,28 @@ fun LastUpdateListItem(modifier: Modifier = Modifier) {
                     horizontalAlignment = Alignment.CenterHorizontally) {
                     item {
                         Column {
-                            Box(
-                                modifier = Modifier
-                                    .wrapContentSize()
-                                    .background(
-                                        color = Color.Black,
-                                        shape = RoundedCornerShape(8.dp)
+                            repeat(2) {
+                                Box(
+                                    modifier = Modifier
+                                        .padding(vertical = 3.dp)
+                                        .wrapContentSize()
+                                        .background(
+                                            color = Color.Black,
+                                            shape = RoundedCornerShape(8.dp)
+                                        )
+                                ) {
+                                    Text(
+                                        text = "CH 1002", modifier = Modifier
+                                            .padding(vertical = 8.dp, horizontal = 15.dp),
+                                        fontSize = 18.sp, color = Color.White, fontWeight = FontWeight.Bold
                                     )
-                            ) {
+                                }
                                 Text(
-                                    text = "CH 1002", modifier = Modifier
-                                        .padding(vertical = 8.dp, horizontal = 15.dp),
-                                    fontSize = 18.sp, color = Color.White, fontWeight = FontWeight.Bold
+                                    text = "1 jam yang lalu",
+                                    modifier = Modifier.wrapContentSize(),
+                                    color = ColorGrey, fontSize = 13.sp,fontWeight = FontWeight.Bold
                                 )
                             }
-                            Text(
-                                text = "1 jam yang lalu",
-                                modifier = Modifier.wrapContentSize(),
-                                color = ColorGrey, fontSize = 13.sp,fontWeight = FontWeight.Bold
-                            )
                         }
                     }
                 }

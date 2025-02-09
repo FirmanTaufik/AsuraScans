@@ -91,7 +91,7 @@ fun HomeScreen(modifier: Modifier = Modifier) {
                 LatestUpdateItemsGrid()
             }
         } else {
-            items(10) {
+            items(3) {
                 LastUpdateListItem()
             }
         }
@@ -129,11 +129,12 @@ fun HomeScreen(modifier: Modifier = Modifier) {
 
 @Composable
 fun NewLatestadded() {
-   Row (modifier = Modifier.fillMaxWidth(),
+   Row (modifier = Modifier.fillMaxWidth()
+       .padding(horizontal = 10.dp),
        verticalAlignment = Alignment.CenterVertically,
        horizontalArrangement = Arrangement.SpaceBetween){
        Text(
-           text = stringResource(id = R.string.most_view),
+           text = "Baru di tambahkan",
            modifier = Modifier.weight(1f), fontWeight = FontWeight.Bold,
            fontSize = 18.sp
        )
@@ -151,9 +152,10 @@ fun NewLatestadded() {
 
     Spacer(modifier = Modifier.height(15.dp))
 
-    LazyRow (modifier = Modifier.fillMaxWidth()){
+    LazyRow (modifier = Modifier.fillMaxWidth()
+        .padding(horizontal = 10.dp)){
         items(10){
-            LastUpdateGridItem(showChapter = false)
+            MostViewItem(true)
         }
     }
 }
@@ -165,9 +167,11 @@ fun LatestUpdateItemsGrid() {
 
     FlowRow(
         maxItemsInEachRow = 3,
-        modifier = Modifier.fillMaxSize(),
+        modifier = Modifier.fillMaxSize()
+            .padding(7.dp),
+        horizontalArrangement = Arrangement.SpaceBetween
     ) {
-        for (i in 0 until 10) {
+        for (i in 0 until 3) {
             LastUpdateGridItem()
         }
     }

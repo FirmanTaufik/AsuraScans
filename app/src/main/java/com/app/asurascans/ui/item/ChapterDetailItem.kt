@@ -45,6 +45,7 @@ fun ChapterDetailItem() {
     Column {
         Row(
             modifier = Modifier
+                .padding(horizontal = 15.dp)
                 .fillMaxWidth()
                 .height(100.dp)
         ) {
