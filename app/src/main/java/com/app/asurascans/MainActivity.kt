@@ -1,8 +1,11 @@
 package com.app.asurascans
 
 import android.annotation.SuppressLint
+import android.content.Intent
 import androidx.compose.animation.AnimatedVisibility
 import androidx.compose.foundation.background
+import androidx.compose.foundation.clickable
+import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
@@ -13,6 +16,7 @@ import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.layout.wrapContentSize
 import androidx.compose.material3.BottomAppBar
+import androidx.compose.material3.Divider
 import androidx.compose.material3.Icon
 import androidx.compose.material3.IconButton
 import androidx.compose.material3.IconButtonDefaults
@@ -24,13 +28,10 @@ import androidx.compose.runtime.Composable
 import androidx.compose.runtime.getValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
-import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.painterResource
-import androidx.compose.ui.text.font.FontWeight
-import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
-import androidx.compose.ui.unit.sp
 import androidx.navigation.NavController
 import androidx.navigation.NavHostController
 import androidx.navigation.compose.NavHost
@@ -45,6 +46,7 @@ import com.app.asurascans.ui.screen.AlphabetScreen
 import com.app.asurascans.ui.screen.DiscoverScreen
 import com.app.asurascans.ui.screen.HistoryBookmark
 import com.app.asurascans.ui.screen.HomeScreen
+import com.app.asurascans.ui.screen.ProfileActivity
 import com.app.asurascans.ui.screen.SettingScreen
 import com.app.asurascans.ui.theme.AsuraScansTheme
 import com.app.asurascans.ui.theme.BackroundColor
@@ -140,51 +142,66 @@ class MainActivity : BaseActivity() {
 
 @Composable
 private fun Header(currentRoute: String?, items: List<NavigationItem>) {
-    Row(
-        modifier = Modifier
-            .background(BackroundColor)
-            .padding(vertical = 10.dp, horizontal = 10.dp)
-            .fillMaxWidth(),
-        verticalAlignment = Alignment.CenterVertically
-    ) {
-        Box(
-            modifier = Modifier
-                .wrapContentSize()
-        ) {
-            AsyncImage(model = R.drawable.ic_small_app, contentDescription = null)
-            //  Icon(painter = painterResource(id = R.drawable.ic_small_app), contentDescription =null )
-        }
+    val context = LocalContext.current
+    Column {
+        Box (modifier = Modifier.fillMaxWidth()){
+            Row(
+                modifier = Modifier
+                    .background(BackroundColor)
+                    .padding(vertical = 5.dp, horizontal = 10.dp)
+                    .fillMaxWidth(),
+                verticalAlignment = Alignment.CenterVertically,
+                horizontalArrangement = Arrangement.SpaceBetween
+            ) {
+                Box(
+                    modifier = Modifier
+                        .wrapContentSize()
+                ) {
+                    AsyncImage(model = R.drawable.ic_small_app, contentDescription = null,
+                        modifier = Modifier.size(50.dp))
+                    //  Icon(painter = painterResource(id = R.drawable.ic_small_app), contentDescription =null )
+                }
 
-        val name  =  items.find { it.route == currentRoute }?.title
+                Row(
+                    modifier = Modifier.wrapContentSize(),
+                    verticalAlignment = Alignment.CenterVertically
+                ) {
+                    IconButton(
+                        onClick = { /*TODO*/ },
+                        modifier = Modifier.size(25.dp)
+                    ) {
+                        Icon(
+                            painter = painterResource(id = R.drawable.ic_search),
+                            contentDescription = null
+                        )
+                    }
+                    Spacer(modifier = Modifier.width(5.dp))
+                    IconButton(
+                        onClick = { /*TODO*/ },
+                        modifier = Modifier.size(25.dp)
+                    ) {
+                        Icon(
+                            painter = painterResource(id = R.drawable.ic_notif),
+                            contentDescription = null
+                        )
+                    }
+                    Spacer(modifier = Modifier.width(5.dp))
+                    AsyncImage(
+                        model = R.drawable.ic_person, contentDescription = null,
+                        modifier = Modifier.size(35.dp).clickable {
+                            context.startActivity(Intent(context, ProfileActivity::class.java))
+                        }
+                    )
+                }
 
-        tittleBoard(name ?: "", Modifier.weight(1f))
-
-       /* Text(text = name ?: "", color = Color.White,
-            modifier = Modifier
-                .weight(1f),
-            textAlign = TextAlign.Center,
-            fontSize = 23.sp, fontWeight = FontWeight.Bold)*/
-
-        Row(
-            modifier = Modifier.wrapContentSize(),
-            verticalAlignment = Alignment.CenterVertically
-        ) {
-            IconButton(onClick = { /*TODO*/ },
-                modifier = Modifier.size(25.dp)) {
-                Icon(painter = painterResource(id = R.drawable.ic_search), contentDescription = null)
             }
-            Spacer(modifier = Modifier.width(5.dp))
-            IconButton(onClick = { /*TODO*/ },
-                modifier = Modifier.size(25.dp)) {
-                Icon(painter = painterResource(id = R.drawable.ic_notif), contentDescription = null)
-            }
-            Spacer(modifier = Modifier.width(5.dp))
-            AsyncImage(
-                model = R.drawable.ic_person, contentDescription = null,
-                modifier = Modifier.size(35.dp)
-            )
-        }
 
+            val name = items.find { it.route == currentRoute }?.title
+
+            tittleBoard(name ?: "", Modifier.wrapContentSize()
+                .align(Alignment.Center))
+        }
+        Divider()
     }
 }
 

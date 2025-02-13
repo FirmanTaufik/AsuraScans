@@ -191,24 +191,6 @@ fun Comments(showBottomSheet: (Boolean) ->Unit) {
                 }
             }
         }
-
-
-        /*Column(
-            modifier = Modifier.padding(16.dp),
-            horizontalAlignment = Alignment.CenterHorizontally
-        ) {
-            Text("Book Your Flight", style = MaterialTheme.typography.bodyLarge, fontWeight = FontWeight.Bold)
-            Spacer(modifier = Modifier.height(16.dp))
-            Button(onClick = {
-                coroutineScope.launch { sheetState.hide() }.invokeOnCompletion {
-                    if (!sheetState.isVisible) {
-                        showBottomSheet .invoke( false)
-                    }
-                }
-            }) {
-                Text("Hide Bottom Sheet")
-            }
-        }*/
     }
 
 }

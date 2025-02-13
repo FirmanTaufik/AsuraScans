@@ -67,9 +67,7 @@ fun HomeScreen(modifier: Modifier = Modifier) {
         horizontalAlignment = Alignment.CenterHorizontally) {
         item {
             Column(modifier = modifier.wrapContentSize()) {
-                Spacer(modifier = Modifier.height(5.dp))
-                Divider()
-                Spacer(modifier = Modifier.height(5.dp))
+                Spacer(modifier = Modifier.height(10.dp))
                 TopSlider()
                 Spacer(modifier = Modifier.height(15.dp))
                 BottomSlider()

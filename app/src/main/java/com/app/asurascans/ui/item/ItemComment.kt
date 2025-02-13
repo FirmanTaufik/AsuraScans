@@ -57,7 +57,7 @@ fun ItemComment(modifier: Modifier = Modifier) {
                             verticalAlignment = Alignment.CenterVertically
                         ) {
                             Image(
-                                painter = painterResource(id = R.drawable.ic_level_comment),
+                                painter = painterResource(id = R.drawable.ic_level_penguasa),
                                 contentDescription = null,
                                 modifier = Modifier.size(15.dp)
                             )
