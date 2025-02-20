@@ -1,6 +1,7 @@
 package com.app.asurascans
 
 import android.annotation.SuppressLint
+import android.content.Intent
 import androidx.compose.animation.AnimatedVisibility
 import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.Box
@@ -25,6 +26,7 @@ import androidx.compose.runtime.getValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.style.TextAlign
@@ -45,6 +47,7 @@ import com.app.asurascans.ui.screen.AlphabetScreen
 import com.app.asurascans.ui.screen.DiscoverScreen
 import com.app.asurascans.ui.screen.HistoryBookmark
 import com.app.asurascans.ui.screen.HomeScreen
+import com.app.asurascans.ui.screen.SearchActivity
 import com.app.asurascans.ui.screen.SettingScreen
 import com.app.asurascans.ui.theme.AsuraScansTheme
 import com.app.asurascans.ui.theme.BackroundColor
@@ -140,6 +143,7 @@ class MainActivity : BaseActivity() {
 
 @Composable
 private fun Header(currentRoute: String?, items: List<NavigationItem>) {
+    val context = LocalContext.current
     Row(
         modifier = Modifier
             .background(BackroundColor)
@@ -169,7 +173,9 @@ private fun Header(currentRoute: String?, items: List<NavigationItem>) {
             modifier = Modifier.wrapContentSize(),
             verticalAlignment = Alignment.CenterVertically
         ) {
-            IconButton(onClick = { /*TODO*/ },
+            IconButton(onClick = {
+                context.startActivity(Intent(context, SearchActivity::class.java))
+            },
                 modifier = Modifier.size(25.dp)) {
                 Icon(painter = painterResource(id = R.drawable.ic_search), contentDescription = null)
             }
