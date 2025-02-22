@@ -75,19 +75,19 @@ class MainActivity : BaseActivity() {
 
         Scaffold(
             topBar = {
-                Header(currentRoute,items)
+                Header(currentRoute, items)
             },
             bottomBar = {
                 BottomNavigationBar(
                     navController = navController,
-                    currentRoute,items
+                    currentRoute, items
                 )
             },
             content = {
                 SetupNavGraph(navHostController = navController, Modifier.padding(it))
             },
             floatingActionButton = {
-                AnimatedVisibility(visible = currentRoute== items.first().route) {
+                AnimatedVisibility(visible = currentRoute == items.first().route) {
                     IconButton(
                         onClick = { /*TODO*/ },
                         modifier = Modifier
@@ -113,7 +113,7 @@ class MainActivity : BaseActivity() {
     @Composable
     private fun SetupNavGraph(navHostController: NavHostController, modif: Modifier) {
         Column(modif.background(BackroundColor)) {
-        //    Header()
+            //    Header()
             NavHost(
                 navController = navHostController,
                 startDestination = NavigationItem.Home.route
@@ -121,7 +121,7 @@ class MainActivity : BaseActivity() {
                 composable(NavigationItem.Home.route) {
                     HomeScreen(modifier = Modifier.weight(1f))
                 }
-                composable(NavigationItem.List .route) {
+                composable(NavigationItem.List.route) {
                     AlphabetScreen(modifier = Modifier.weight(1f))
                 }
                 composable(NavigationItem.Discover.route) {
@@ -146,7 +146,7 @@ class MainActivity : BaseActivity() {
 private fun Header(currentRoute: String?, items: List<NavigationItem>) {
     val context = LocalContext.current
     Column {
-        Box (modifier = Modifier.fillMaxWidth()){
+        Box(modifier = Modifier.fillMaxWidth()) {
             Row(
                 modifier = Modifier
                     .background(BackroundColor)
@@ -159,8 +159,10 @@ private fun Header(currentRoute: String?, items: List<NavigationItem>) {
                     modifier = Modifier
                         .wrapContentSize()
                 ) {
-                    AsyncImage(model = R.drawable.ic_small_app, contentDescription = null,
-                        modifier = Modifier.size(50.dp))
+                    AsyncImage(
+                        model = R.drawable.ic_small_app, contentDescription = null,
+                        modifier = Modifier.size(50.dp)
+                    )
                     //  Icon(painter = painterResource(id = R.drawable.ic_small_app), contentDescription =null )
                 }
 
@@ -169,7 +171,8 @@ private fun Header(currentRoute: String?, items: List<NavigationItem>) {
                     verticalAlignment = Alignment.CenterVertically
                 ) {
                     IconButton(
-                        onClick = {                 context.startActivity(Intent(context, SearchActivity::class.java))
+                        onClick = {
+                            context.startActivity(Intent(context, SearchActivity::class.java))
                         },
                         modifier = Modifier.size(25.dp)
                     ) {
@@ -191,9 +194,11 @@ private fun Header(currentRoute: String?, items: List<NavigationItem>) {
                     Spacer(modifier = Modifier.width(5.dp))
                     AsyncImage(
                         model = R.drawable.ic_person, contentDescription = null,
-                        modifier = Modifier.size(35.dp).clickable {
-                            context.startActivity(Intent(context, ProfileActivity::class.java))
-                        }
+                        modifier = Modifier
+                            .size(35.dp)
+                            .clickable {
+                                context.startActivity(Intent(context, ProfileActivity::class.java))
+                            }
                     )
                 }
 
@@ -201,8 +206,12 @@ private fun Header(currentRoute: String?, items: List<NavigationItem>) {
 
             val name = items.find { it.route == currentRoute }?.title
 
-            tittleBoard(name ?: "", Modifier.wrapContentSize()
-                .align(Alignment.Center))
+            tittleBoard(
+                name ?: "",
+                Modifier
+                    .wrapContentSize()
+                    .align(Alignment.Center)
+            )
         }
         Divider()
     }
@@ -219,13 +228,23 @@ fun BottomNavigationBar(
 
         items.forEach { item ->
             NavigationBarItem(
-                icon = { Icon(painterResource(id = item.icon), modifier = Modifier.size(25.dp), contentDescription = item.title) },
+                icon = {
+                    Icon(
+                        painterResource(id = item.icon),
+                        modifier = Modifier.size(25.dp),
+                        contentDescription = item.title
+                    )
+                },
                 label = { Text(text = item.title) },
                 alwaysShowLabel = false,
                 selected = currentRoute == item.route,
 
-                colors = NavigationBarItemDefaults.colors(unselectedIconColor = ColorButtonRefreshReadChapter,
-                    unselectedTextColor = ColorButtonRefreshReadChapter, selectedTextColor = primaryColor, selectedIconColor = primaryColor),
+                colors = NavigationBarItemDefaults.colors(
+                    unselectedIconColor = ColorButtonRefreshReadChapter,
+                    unselectedTextColor = ColorButtonRefreshReadChapter,
+                    selectedTextColor = primaryColor,
+                    selectedIconColor = primaryColor
+                ),
                 onClick = {
                     navController.navigate(item.route)
                     /* Add code later */
