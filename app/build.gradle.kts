@@ -69,6 +69,7 @@ dependencies {
     implementation(libs.androidx.ui.graphics)
     implementation(libs.androidx.ui.tooling.preview)
     implementation(libs.androidx.material3)
+    implementation(libs.androidx.compose.testing)
     testImplementation(libs.junit)
     androidTestImplementation(libs.androidx.junit)
     androidTestImplementation(libs.androidx.espresso.core)
@@ -159,5 +160,6 @@ dependencies {
 
     val nav_version = "2.8.6"
     implementation("androidx.navigation:navigation-compose:$nav_version")
+    implementation("com.github.GIGAMOLE:ComposeScrollbars:1.0.4")
 
 }

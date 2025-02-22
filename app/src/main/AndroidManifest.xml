@@ -17,6 +17,10 @@
             android:exported="false"
             android:theme="@style/Theme.AsuraScans" />
         <activity
+            android:name=".ui.screen.SearchActivity"
+            android:exported="false"
+            android:theme="@style/Theme.AsuraScans" />
+        <activity
             android:name=".ui.screen.ReadActivity"
             android:exported="false"
             android:theme="@style/Theme.AsuraScans" />
@@ -24,6 +28,7 @@
             android:name=".ui.screen.DetailActivity"
             android:exported="false"
          android:configChanges="keyboardHidden|orientation|screenSize"
+
          android:windowSoftInputMode="adjustResize"
             android:theme="@style/Theme.AsuraScans" />
         <activity

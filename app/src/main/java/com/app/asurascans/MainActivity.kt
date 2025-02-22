@@ -28,6 +28,7 @@ import androidx.compose.runtime.Composable
 import androidx.compose.runtime.getValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.tooling.preview.Preview
@@ -46,6 +47,7 @@ import com.app.asurascans.ui.screen.AlphabetScreen
 import com.app.asurascans.ui.screen.DiscoverScreen
 import com.app.asurascans.ui.screen.HistoryBookmark
 import com.app.asurascans.ui.screen.HomeScreen
+import com.app.asurascans.ui.screen.SearchActivity
 import com.app.asurascans.ui.screen.ProfileActivity
 import com.app.asurascans.ui.screen.SettingScreen
 import com.app.asurascans.ui.theme.AsuraScansTheme
@@ -167,7 +169,8 @@ private fun Header(currentRoute: String?, items: List<NavigationItem>) {
                     verticalAlignment = Alignment.CenterVertically
                 ) {
                     IconButton(
-                        onClick = { /*TODO*/ },
+                        onClick = {                 context.startActivity(Intent(context, SearchActivity::class.java))
+                        },
                         modifier = Modifier.size(25.dp)
                     ) {
                         Icon(
