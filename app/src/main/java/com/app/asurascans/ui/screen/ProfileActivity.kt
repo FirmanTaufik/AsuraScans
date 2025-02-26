@@ -18,6 +18,7 @@ import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.layout.wrapContentSize
 import androidx.compose.foundation.lazy.LazyRow
+import androidx.compose.foundation.lazy.itemsIndexed
 import androidx.compose.foundation.shape.CircleShape
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material3.Card
@@ -27,7 +28,6 @@ import androidx.compose.material3.Scaffold
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.getValue
-import androidx.compose.runtime.mutableStateListOf
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
 import androidx.compose.ui.Alignment
@@ -53,10 +53,15 @@ import com.app.asurascans.ui.theme.backgroundItemColor
 import com.app.asurascans.ui.theme.primaryColor
 
 class ProfileActivity : BaseActivity() {
-    @SuppressLint("UnusedMaterial3ScaffoldPaddingParameter")
+    @SuppressLint("UnusedMaterial3ScaffoldPaddingParameter", "MutableCollectionMutableState")
     @Composable
     override fun ScreenContent() {
-        val levels by remember { mutableStateListOf(LevelItemData("","",1)) }
+
+        val levels by remember { mutableStateOf(arrayListOf<LevelItemData>()) }
+        repeat(5){
+            levels.add( LevelItemData("","",1))
+        }
+
 
         Scaffold( ) {
             Box(modifier = Modifier.imePadding()) {
@@ -90,14 +95,14 @@ class ProfileActivity : BaseActivity() {
 
                 }
 
-                ContentArea()
+                ContentArea(levels)
             }
         }
     }
 
     @OptIn(ExperimentalMaterial3Api::class)
     @Composable
-    private fun ContentArea() {
+    private fun ContentArea(levels: ArrayList<LevelItemData>) {
         Column(modifier = Modifier.fillMaxSize(),
             horizontalAlignment = Alignment.CenterHorizontally) {
             Spacer(modifier = Modifier.height(60.dp))
@@ -163,22 +168,28 @@ class ProfileActivity : BaseActivity() {
             }
             Spacer(modifier = Modifier.height(40.dp))
 
-            Card(modifier = Modifier
-                .fillMaxWidth()
-                .padding(10.dp) ,
-                shape = RoundedCornerShape(15.dp),
-                colors = CardDefaults.cardColors(containerColor = backgroundItemColor )
-            ) {
-                Box(modifier = Modifier
-                    .fillMaxWidth()
-                    .padding(10.dp)) {
+            Box {
+                Card(
+                    modifier = Modifier
+                        .height(173.dp)
+                        .fillMaxWidth(),
+                    shape = RoundedCornerShape(15.dp),
+                    colors = CardDefaults.cardColors(containerColor = backgroundItemColor)
+                )  {}
+                Box(
+                    modifier = Modifier
+                        .fillMaxWidth()
+                        .padding(15.dp)
+                ) {
                     LazyRow(
                         modifier = Modifier.fillMaxWidth(),
                         horizontalArrangement = Arrangement.SpaceBetween
                     ) {
-                        items(5) {
-                            Leveltem()
+                        itemsIndexed(levels) { index, item ->
+                            val size = levels.size
+                            Leveltem(index, size)
                         }
+
                     }
                 }
             }

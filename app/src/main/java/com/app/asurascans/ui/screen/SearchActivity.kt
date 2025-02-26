@@ -106,7 +106,9 @@ class SearchActivity : BaseActivity() {
                 thickness = 1.dp
             )
             Spacer(modifier = Modifier.height(10.dp))
-            GenreArea()
+            if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.UPSIDE_DOWN_CAKE) {
+                GenreArea()
+            }
             Spacer(modifier = Modifier.height(10.dp))
             FormatArea()
             Spacer(modifier = Modifier.height(10.dp))
@@ -137,7 +139,7 @@ class SearchActivity : BaseActivity() {
                 isShow= !isShow
             }) {
                 Icon(
-                    imageVector = Icons.Default.KeyboardArrowUp,
+                    imageVector = if (isShow) Icons.Default.KeyboardArrowUp else Icons.Default.KeyboardArrowDown,
                     contentDescription = null,
                     tint = ColorWhite
                 )
@@ -187,7 +189,7 @@ class SearchActivity : BaseActivity() {
                 isShow=!isShow
             }) {
                 Icon(
-                    imageVector = Icons.Default.KeyboardArrowUp,
+                    imageVector = if (isShow) Icons.Default.KeyboardArrowUp else Icons.Default.KeyboardArrowDown,
                     contentDescription = null,
                     tint = ColorWhite
                 )

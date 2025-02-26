@@ -1,5 +1,9 @@
 package com.app.asurascans.ui.screen
 
+import android.app.Activity
+import android.content.Context
+import android.content.Intent
+import androidx.activity.ComponentActivity
 import androidx.compose.foundation.Image
 import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.Arrangement
@@ -39,6 +43,7 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.layout.ContentScale
+import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
@@ -322,6 +327,7 @@ private fun SettingArea() {
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
 private fun HeaderProfile() {
+    val context = LocalContext.current
     Box(
         modifier = Modifier
             .fillMaxWidth()
@@ -375,7 +381,7 @@ private fun HeaderProfile() {
                 Box(modifier = Modifier.padding(top = 0.dp)) {
                     Card(shape = RoundedCornerShape(5.dp),
                         onClick = {
-
+                             context.launchActivity(ProfileActivity::class.java)
                         }) {
                         Image(
                             painter = painterResource(id = R.drawable.ic_logout),
@@ -402,4 +408,8 @@ private fun HeaderProfile() {
             Spacer(modifier = Modifier.width(15.dp))
         }
     }
+}
+
+private fun Context.launchActivity(activity : Class<ComponentActivity>) {
+     this.startActivity(Intent(this, activity))
 }
