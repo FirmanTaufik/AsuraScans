@@ -1,5 +1,7 @@
 package com.app.asurascans.helper
 
+import androidx.activity.compose.rememberLauncherForActivityResult
+import androidx.activity.result.contract.ActivityResultContracts
 import androidx.compose.animation.core.animateFloatAsState
 import androidx.compose.animation.core.tween
 import androidx.compose.foundation.ScrollState
@@ -17,9 +19,12 @@ import androidx.compose.foundation.lazy.LazyListState
 import androidx.compose.foundation.shape.CircleShape
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.derivedStateOf
 import androidx.compose.runtime.getValue
+import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
+import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.alpha
@@ -59,16 +64,6 @@ fun tittleBoard(title:String, modifier: Modifier) {
            fontSize = 23.sp, fontWeight = FontWeight.Bold)
     }
 }
-
-@Composable
-fun getContext()  = LocalContext.current
-
-@Composable
-fun startNewActivity() {
-    val context = LocalContext.current
-
-}
-
 
 
 @Composable
@@ -146,6 +141,26 @@ fun CustomScrollbar(
         }
     }
 }
+
+@Composable
+fun RequestPermissions(
+    permissions: Array<String>,
+    onResult: (Boolean) -> Unit
+) {
+    var allGranted by remember { mutableStateOf(false) }
+
+    val launcher = rememberLauncherForActivityResult(
+        contract = ActivityResultContracts.RequestMultiplePermissions()
+    ) { result ->
+        allGranted = result.all { it.value }
+        onResult(allGranted)
+    }
+
+    LaunchedEffect(Unit) {
+        launcher.launch(permissions)
+    }
+}
+
 
 private fun calculateScrollThumbOffset(state: ScrollState): Dp {
     if (state.maxValue == 0) return 0.dp

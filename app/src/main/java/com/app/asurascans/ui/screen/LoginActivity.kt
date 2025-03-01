@@ -82,6 +82,8 @@ fun LoginContent(modifier: Modifier = Modifier) {
             Card(
                 onClick = {
                           context.startActivity(Intent(context, MainActivity::class.java))
+
+                          
                           },
                 colors = CardDefaults.cardColors(
                     containerColor = primaryColor,

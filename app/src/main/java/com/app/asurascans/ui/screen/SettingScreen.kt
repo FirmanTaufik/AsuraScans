@@ -48,8 +48,8 @@ import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
-import coil.compose.AsyncImage
 import com.app.asurascans.R
+import com.app.asurascans.helper.startNewActivity
 import com.app.asurascans.ui.item.StarRatingBar
 import com.app.asurascans.ui.theme.ColorBlack
 import com.app.asurascans.ui.theme.ColorGrey
@@ -381,7 +381,7 @@ private fun HeaderProfile() {
                 Box(modifier = Modifier.padding(top = 0.dp)) {
                     Card(shape = RoundedCornerShape(5.dp),
                         onClick = {
-                             context.launchActivity(ProfileActivity::class.java)
+                            context.startNewActivity<ProfileActivity>()
                         }) {
                         Image(
                             painter = painterResource(id = R.drawable.ic_logout),
@@ -410,6 +410,3 @@ private fun HeaderProfile() {
     }
 }
 
-private fun Context.launchActivity(activity : Class<ComponentActivity>) {
-     this.startActivity(Intent(this, activity))
-}
