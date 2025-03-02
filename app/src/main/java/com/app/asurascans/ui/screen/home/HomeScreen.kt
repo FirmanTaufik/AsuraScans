@@ -1,4 +1,4 @@
-package com.app.asurascans.ui.screen
+package com.app.asurascans.ui.screen.home
 
 import androidx.compose.foundation.Image
 import androidx.compose.foundation.clickable
@@ -6,7 +6,6 @@ import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.ExperimentalLayoutApi
-import androidx.compose.foundation.layout.FlowColumn
 import androidx.compose.foundation.layout.FlowRow
 import androidx.compose.foundation.layout.PaddingValues
 import androidx.compose.foundation.layout.Row
@@ -21,17 +20,15 @@ import androidx.compose.foundation.layout.wrapContentSize
 import androidx.compose.foundation.layout.wrapContentWidth
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.LazyRow
-import androidx.compose.foundation.lazy.grid.GridCells
-import androidx.compose.foundation.lazy.grid.LazyVerticalGrid
 import androidx.compose.foundation.lazy.itemsIndexed
 import androidx.compose.foundation.lazy.rememberLazyListState
-import androidx.compose.foundation.rememberScrollState
 import androidx.compose.material3.Button
 import androidx.compose.material3.ButtonDefaults
-import androidx.compose.material3.Divider
+import androidx.compose.material3.CircularProgressIndicator
 import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
@@ -46,7 +43,9 @@ import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
+import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import com.app.asurascans.R
+import com.app.asurascans.core.UIState
 import com.app.asurascans.ui.item.BottomSlider
 import com.app.asurascans.ui.item.LastUpdateGridItem
 import com.app.asurascans.ui.item.LastUpdateListItem
@@ -54,14 +53,20 @@ import com.app.asurascans.ui.item.MostViewItem
 import com.app.asurascans.ui.item.TextSelectedItem
 import com.app.asurascans.ui.item.TopSliderItem
 import com.app.asurascans.ui.theme.ColorBlack
+import com.app.asurascans.ui.theme.ColorWhite
 import com.app.asurascans.ui.theme.primaryColor
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
-fun HomeScreen(modifier: Modifier = Modifier) {
+fun HomeScreen(modifier: Modifier = Modifier, homeVm: HomeVM) {
 
     val state = rememberLazyListState()
     var isGridLatestupdate by remember { mutableStateOf(true) }
+
+    LaunchedEffect(key1 = true) {
+        homeVm.getHome()
+    }
+    val resposeState by homeVm.homeState.collectAsStateWithLifecycle()
 
     LazyColumn(state = state,
         horizontalAlignment = Alignment.CenterHorizontally) {
@@ -82,17 +87,33 @@ fun HomeScreen(modifier: Modifier = Modifier) {
                 isGridLatestupdate = it
             }
         }
+        when(resposeState) {
+            is UIState.OnError ->  {
 
-        if (isGridLatestupdate) {
-
-            item {
-                LatestUpdateItemsGrid()
             }
-        } else {
-            items(3) {
-                LastUpdateListItem()
+            UIState.OnIdle -> {
+
+            }
+            UIState.OnLoading -> {
+                item {
+                    CircularProgressIndicator(color = ColorWhite)
+                }
+            }
+            is UIState.OnSuccess<*>  -> {
+                val data = (resposeState as UIState.OnSuccess<*>).data as UpdateModelResponse
+                if (isGridLatestupdate) {
+
+                    item {
+                        LatestUpdateItemsGrid(data)
+                    }
+                } else {
+                    items(3) {
+                        LastUpdateListItem(data)
+                    }
+                }
             }
         }
+
 
         item {
             Spacer(modifier = Modifier.height(15.dp))
@@ -127,7 +148,8 @@ fun HomeScreen(modifier: Modifier = Modifier) {
 
 @Composable
 fun NewLatestadded() {
-   Row (modifier = Modifier.fillMaxWidth()
+   Row (modifier = Modifier
+       .fillMaxWidth()
        .padding(horizontal = 10.dp),
        verticalAlignment = Alignment.CenterVertically,
        horizontalArrangement = Arrangement.SpaceBetween){
@@ -150,7 +172,8 @@ fun NewLatestadded() {
 
     Spacer(modifier = Modifier.height(15.dp))
 
-    LazyRow (modifier = Modifier.fillMaxWidth()
+    LazyRow (modifier = Modifier
+        .fillMaxWidth()
         .padding(horizontal = 10.dp)){
         items(10){
             MostViewItem(true)
@@ -160,12 +183,13 @@ fun NewLatestadded() {
 
 @OptIn(ExperimentalLayoutApi::class)
 @Composable
-fun LatestUpdateItemsGrid() {
+fun LatestUpdateItemsGrid(data: UpdateModelResponse) {
     val scrollStateLatestUpdate = rememberLazyListState()
 
     FlowRow(
         maxItemsInEachRow = 3,
-        modifier = Modifier.fillMaxSize()
+        modifier = Modifier
+            .fillMaxSize()
             .padding(7.dp),
         horizontalArrangement = Arrangement.SpaceBetween
     ) {

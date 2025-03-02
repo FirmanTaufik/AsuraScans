@@ -28,11 +28,11 @@ import androidx.compose.runtime.Composable
 import androidx.compose.runtime.getValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
-import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
+import androidx.hilt.navigation.compose.hiltViewModel
 import androidx.navigation.NavController
 import androidx.navigation.NavHostController
 import androidx.navigation.compose.NavHost
@@ -46,10 +46,11 @@ import com.app.asurascans.ui.navigation.NavigationItem
 import com.app.asurascans.ui.screen.AlphabetScreen
 import com.app.asurascans.ui.screen.DiscoverScreen
 import com.app.asurascans.ui.screen.HistoryBookmark
-import com.app.asurascans.ui.screen.HomeScreen
+import com.app.asurascans.ui.screen.home.HomeScreen
 import com.app.asurascans.ui.screen.SearchActivity
 import com.app.asurascans.ui.screen.ProfileActivity
 import com.app.asurascans.ui.screen.SettingScreen
+import com.app.asurascans.ui.screen.home.HomeVM
 import com.app.asurascans.ui.theme.AsuraScansTheme
 import com.app.asurascans.ui.theme.BackroundColor
 import com.app.asurascans.ui.theme.ColorBlack
@@ -112,6 +113,7 @@ class MainActivity : BaseActivity() {
 
     @Composable
     private fun SetupNavGraph(navHostController: NavHostController, modif: Modifier) {
+        val homeVm = hiltViewModel<HomeVM>()
         Column(modif.background(BackroundColor)) {
             //    Header()
             NavHost(
@@ -119,7 +121,7 @@ class MainActivity : BaseActivity() {
                 startDestination = NavigationItem.Home.route
             ) {
                 composable(NavigationItem.Home.route) {
-                    HomeScreen(modifier = Modifier.weight(1f))
+                    HomeScreen(modifier = Modifier.weight(1f),homeVm)
                 }
                 composable(NavigationItem.List.route) {
                     AlphabetScreen(modifier = Modifier.weight(1f))
