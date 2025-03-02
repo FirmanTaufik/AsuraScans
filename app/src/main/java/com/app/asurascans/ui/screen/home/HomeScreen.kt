@@ -83,7 +83,7 @@ fun HomeScreen(modifier: Modifier = Modifier, homeVm: HomeVM) {
         }
 
         item {
-            LatestUpdateHeader {
+            LatestUpdateHeader(homeVm) {
                 isGridLatestupdate = it
             }
         }
@@ -104,11 +104,11 @@ fun HomeScreen(modifier: Modifier = Modifier, homeVm: HomeVM) {
                 if (isGridLatestupdate) {
 
                     item {
-                        LatestUpdateItemsGrid(data)
+                        LatestUpdateItemsGrid(data, homeVm)
                     }
                 } else {
                     items(3) {
-                        LastUpdateListItem(data)
+                        LastUpdateListItem(data, homeVm)
                     }
                 }
             }
@@ -183,7 +183,7 @@ fun NewLatestadded() {
 
 @OptIn(ExperimentalLayoutApi::class)
 @Composable
-fun LatestUpdateItemsGrid(data: UpdateModelResponse) {
+fun LatestUpdateItemsGrid(data: UpdateModelResponse, homeVm: HomeVM) {
     val scrollStateLatestUpdate = rememberLazyListState()
 
     FlowRow(
@@ -239,8 +239,8 @@ private fun MostView(modifier: Modifier = Modifier) {
 
 
 @Composable
-private fun LatestUpdateHeader(onChangeList: (Boolean) -> Unit) {
-    rememberLazyListState()
+private fun LatestUpdateHeader(homeVm: HomeVM,  onChangeList: (Boolean) -> Unit) {
+
     val listBottom = stringArrayResource(id = R.array.list_type_home_bottom)
     Text(
         text = stringResource(id = R.string.last_update),

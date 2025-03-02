@@ -31,6 +31,7 @@ import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import coil.compose.AsyncImage
 import com.app.asurascans.R
+import com.app.asurascans.ui.screen.home.HomeVM
 import com.app.asurascans.ui.screen.home.UpdateModelResponse
 import com.app.asurascans.ui.theme.ColorGrey
 import com.app.asurascans.ui.theme.ColorRed
@@ -38,7 +39,7 @@ import com.app.asurascans.ui.theme.ColorTransparent
 import com.app.asurascans.ui.theme.ColorTransparentChip
 
 @Composable
-fun LastUpdateListItem(modifier: UpdateModelResponse = Modifier) {
+fun LastUpdateListItem(modifier: UpdateModelResponse  , homeVm: HomeVM) {
     Box(
         modifier = Modifier
             .wrapContentSize()
