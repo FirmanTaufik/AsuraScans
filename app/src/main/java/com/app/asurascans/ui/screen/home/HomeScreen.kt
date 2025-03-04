@@ -55,6 +55,8 @@ import com.app.asurascans.ui.item.TopSliderItem
 import com.app.asurascans.ui.theme.ColorBlack
 import com.app.asurascans.ui.theme.ColorWhite
 import com.app.asurascans.ui.theme.primaryColor
+import androidx.compose.runtime.collectAsState
+
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
@@ -185,7 +187,7 @@ fun NewLatestadded() {
 @Composable
 fun LatestUpdateItemsGrid(data: UpdateModelResponse, homeVm: HomeVM) {
     val scrollStateLatestUpdate = rememberLazyListState()
-
+    val list by remember{ mutableStateOf(homeVm.itemsSelected ) }
     FlowRow(
         maxItemsInEachRow = 3,
         modifier = Modifier
@@ -193,8 +195,8 @@ fun LatestUpdateItemsGrid(data: UpdateModelResponse, homeVm: HomeVM) {
             .padding(7.dp),
         horizontalArrangement = Arrangement.SpaceBetween
     ) {
-        for (i in 0 until 3) {
-            LastUpdateGridItem()
+        list.forEach {
+            LastUpdateGridItem(it)
         }
     }
 }
@@ -219,7 +221,7 @@ private fun MostView(modifier: Modifier = Modifier) {
             modifier = Modifier.wrapContentSize(),
         ) {
             itemsIndexed(listTop) { i, value ->
-                TextSelectedItem(value)
+                TextSelectedItem(value,i, 0)
             }
         }
     }
@@ -241,7 +243,8 @@ private fun MostView(modifier: Modifier = Modifier) {
 @Composable
 private fun LatestUpdateHeader(homeVm: HomeVM,  onChangeList: (Boolean) -> Unit) {
 
-    val listBottom = stringArrayResource(id = R.array.list_type_home_bottom)
+    val listBottom = homeVm.listBottom
+    val indexSelected by remember { mutableStateOf(homeVm.itemTypeBottomSelectedIndex.value) }
     Text(
         text = stringResource(id = R.string.last_update),
         modifier = Modifier
@@ -258,7 +261,9 @@ private fun LatestUpdateHeader(homeVm: HomeVM,  onChangeList: (Boolean) -> Unit)
     ) {
         LazyRow(modifier = Modifier.weight(1f)) {
             itemsIndexed(listBottom) { i, value ->
-                TextSelectedItem(value)
+                TextSelectedItem(value,i, indexSelected) {
+                    homeVm.setItemTypeBottomSelectedIndex(it)
+                }
             }
         }
         Image(

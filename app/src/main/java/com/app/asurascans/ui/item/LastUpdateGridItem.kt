@@ -38,11 +38,12 @@ import androidx.compose.ui.unit.sp
 import coil.compose.AsyncImage
 import com.app.asurascans.R
 import com.app.asurascans.helper.getDeviceWidthInDp
+import com.app.asurascans.ui.screen.home.UpdateModelResponse
 import com.app.asurascans.ui.theme.ColorBlack
 import com.app.asurascans.ui.theme.ColorTransparent
 
 @Composable
-fun LastUpdateGridItem(modifier: Modifier = Modifier, showChapter : Boolean ?= true) {
+fun LastUpdateGridItem(modifier: Modifier = Modifier, showChapter : Boolean ?= true, data : UpdateModelResponse.List ?= UpdateModelResponse. List() ) {
     Column(
         modifier = Modifier
             .width((getDeviceWidthInDp() / 3.1).dp)
@@ -55,7 +56,7 @@ fun LastUpdateGridItem(modifier: Modifier = Modifier, showChapter : Boolean ?= t
                 .wrapContentSize()
         ) {
             AsyncImage(
-                model = "https://upload.wikimedia.org/wikipedia/id/thumb/d/db/Boruto_manga_vol_1.jpg/220px-Boruto_manga_vol_1.jpg",
+                model = data?.coverImageUrl ?: "" ,
                 contentDescription = null,
                 modifier = Modifier
                     .clip(RoundedCornerShape(6.dp))
@@ -105,7 +106,7 @@ fun LastUpdateGridItem(modifier: Modifier = Modifier, showChapter : Boolean ?= t
                         )
                         Spacer(modifier = Modifier.width(3.dp))
                         Text(
-                            text = "7.5", color = Color.White, fontWeight = FontWeight.Bold,
+                            text = data?.userRating, color = Color.White, fontWeight = FontWeight.Bold,
                             fontSize = 15.sp
                         )
                     }
@@ -192,7 +193,7 @@ fun LastUpdateGridItem(modifier: Modifier = Modifier, showChapter : Boolean ?= t
 
         Spacer(modifier = Modifier.height(3.dp))
         Text(
-            text = "Solo Leveling", color = Color.White, fontWeight = FontWeight.Bold,
+            text = data?.title ?: "", color = Color.White, fontWeight = FontWeight.Bold,
             fontSize = 15.sp,
             textAlign = TextAlign.Center,
             maxLines = 1,
