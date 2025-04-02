@@ -3,6 +3,7 @@ package com.app.asurascans.ui.item
 import androidx.compose.foundation.Image
 import androidx.compose.foundation.background
 import androidx.compose.foundation.border
+import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
@@ -43,10 +44,14 @@ import com.app.asurascans.ui.theme.ColorBlack
 import com.app.asurascans.ui.theme.ColorTransparent
 
 @Composable
-fun LastUpdateGridItem(modifier: Modifier = Modifier, showChapter : Boolean ?= true, data : UpdateModelResponse.List ?= UpdateModelResponse. List() ) {
+fun LastUpdateGridItem(modifier: Modifier = Modifier, showChapter : Boolean ?= true,
+                       data : UpdateModelResponse.List ?= UpdateModelResponse. List(), onClick :(String) ->Unit ?={} ) {
     Column(
         modifier = Modifier
             .width((getDeviceWidthInDp() / 3.1).dp)
+            .clickable {
+                onClick.invoke(data?.seriesId ?: "")
+            }
             .wrapContentHeight()
             .padding(horizontal = 5.dp,),
         horizontalAlignment = Alignment.CenterHorizontally
@@ -106,7 +111,7 @@ fun LastUpdateGridItem(modifier: Modifier = Modifier, showChapter : Boolean ?= t
                         )
                         Spacer(modifier = Modifier.width(3.dp))
                         Text(
-                            text = data?.userRating, color = Color.White, fontWeight = FontWeight.Bold,
+                            text = data?.userRating.toString(), color = Color.White, fontWeight = FontWeight.Bold,
                             fontSize = 15.sp
                         )
                     }

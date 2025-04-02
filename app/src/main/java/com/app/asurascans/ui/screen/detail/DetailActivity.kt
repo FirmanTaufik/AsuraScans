@@ -1,6 +1,7 @@
-package com.app.asurascans.ui.screen
+package com.app.asurascans.ui.screen.detail
 
 import android.annotation.SuppressLint
+import androidx.activity.viewModels
 import androidx.compose.foundation.BorderStroke
 import androidx.compose.foundation.Image
 import androidx.compose.foundation.background
@@ -21,13 +22,14 @@ import androidx.compose.foundation.layout.wrapContentHeight
 import androidx.compose.foundation.layout.wrapContentSize
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.LazyRow
-import androidx.compose.foundation.rememberScrollState
+import androidx.compose.foundation.lazy.itemsIndexed
 import androidx.compose.foundation.shape.CircleShape
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material3.Button
 import androidx.compose.material3.ButtonDefaults
 import androidx.compose.material3.Card
 import androidx.compose.material3.CardDefaults
+import androidx.compose.material3.CircularProgressIndicator
 import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.Icon
 import androidx.compose.material3.IconButton
@@ -36,6 +38,7 @@ import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Scaffold
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
@@ -54,11 +57,18 @@ import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
+import androidx.hilt.navigation.compose.hiltViewModel
+import androidx.lifecycle.compose.collectAsStateWithLifecycle
+import androidx.navigation.NavHostController
 import coil.compose.AsyncImage
 import com.app.asurascans.R
 import com.app.asurascans.core.BaseActivity
+import com.app.asurascans.core.BaseViewModel
+import com.app.asurascans.core.UIState
+import com.app.asurascans.helper.Constant
 import com.app.asurascans.ui.bottomsheet.Comments
 import com.app.asurascans.ui.item.ChapterDetailItem
+import com.app.asurascans.ui.screen.home.HomeVM
 import com.app.asurascans.ui.theme.ColorBlack
 import com.app.asurascans.ui.theme.ColorButtonRefreshReadChapter
 import com.app.asurascans.ui.theme.ColorIcon
@@ -67,105 +77,164 @@ import com.app.asurascans.ui.theme.ColorWhite
 import com.app.asurascans.ui.theme.backgroundItemColor
 import com.app.asurascans.ui.theme.primaryColor
 
-class DetailActivity : BaseActivity() {
+class DetailActivity  : BaseActivity () {
 
-    @SuppressLint("UnusedMaterial3ScaffoldPaddingParameter")
-    @OptIn(ExperimentalMaterial3Api::class)
+
+    override fun viewModel(): DetailVM {
+        val viewModel :DetailVM by viewModels()
+        return viewModel
+    }
+
+
     @Composable
-    override fun ScreenContent() {
-        val state = rememberScrollState()
-
-        var showBottomSheet by remember { mutableStateOf(false) }
-
-        Scaffold(floatingActionButton = {
-            IconButton(
-                onClick = {  showBottomSheet = true },
-                modifier = Modifier
-                    .size(70.dp),
-                colors = IconButtonDefaults.iconButtonColors(
-                    contentColor = ColorBlack,
-                    containerColor = primaryColor
-                )
-            ) {
-                Icon(
-                    painter = painterResource(id = R.drawable.ic_comment),
-                    contentDescription = null,
-                    tint = ColorBlack,
-                    modifier = Modifier.size(50.dp)
-                )
-            }
-        }) {
-            Box(modifier = Modifier.imePadding()) {
-                AsyncImage(
-                    model = "https://imgsrv.crunchyroll.com/cdn-cgi/image/fit=contain,format=auto,quality=85,width=480,height=720/catalog/crunchyroll/323c82257b2f6567fabbb7bd55bfa753.jpg",
-                    contentDescription = null,
-                    contentScale = ContentScale.Crop,
-                    modifier = Modifier.fillMaxSize()
-                )
-
-                Column {
-                    Box(
-                        modifier = Modifier
-                            .fillMaxWidth()
-                            .height(400.dp)
-                            .background(
-                                brush = Brush.verticalGradient(
-                                    colors = listOf(ColorTransparent, Color.Black)
-                                ),
-                            ),
-                    )
-                    Box(
-                        modifier = Modifier
-                            .fillMaxSize()
-                            .background(
-                                color = ColorBlack,
-                            ),
-                    )
-                }
+    override fun BaseBottomsheet() {
+       Comments {
+           viewModel().setBottomSheetSate(it)
+       }
+    }
 
 
-                LazyColumn(horizontalAlignment = Alignment.CenterHorizontally,
-                    modifier = Modifier.fillMaxSize()) {
-                    item {
-                        HeaderDetail()
-                        Spacer(modifier = Modifier.height(15.dp))
-                    }
-                    item {
-                        PosterAndTitle()
-                        Spacer(modifier = Modifier.height(15.dp))
-                    }
-                    item {
-                        GenreSlider()
-                        Spacer(modifier = Modifier.height(15.dp))
-                    }
-                    item {
-                        HiglightComment()
-                        Spacer(modifier = Modifier.height(15.dp))
-                    }
-                    item {
-                        ListChapterArea()
-                        Spacer(modifier = Modifier.height(15.dp))
-                    }
-                    items(1000){
-                        ChapterDetailItem()
-                    }
-                }
-
-            }
-
-            if (showBottomSheet) {
-                Comments {
-                    showBottomSheet = it
-                }
-            }
+    @Composable
+    override fun BaseFloatingActionButton()  {
+         IconButton(
+            onClick = {  viewModel().setBottomSheetSate(true) },
+            modifier = Modifier
+                .size(70.dp),
+            colors = IconButtonDefaults.iconButtonColors(
+                contentColor = ColorBlack,
+                containerColor = primaryColor
+            )
+        ) {
+            Icon(
+                painter = painterResource(id = R.drawable.ic_comment),
+                contentDescription = null,
+                tint = ColorBlack,
+                modifier = Modifier.size(50.dp)
+            )
         }
     }
 
+    @SuppressLint("UnusedMaterial3ScaffoldPaddingParameter")
     @Composable
-    private fun PosterAndTitle() {
+    override fun BaseContent(
+        paddingValues: PaddingValues
+    ) {
+        val seriesId = intent.getStringExtra(Constant.SERIES_ID)
+        LaunchedEffect(true) {
+            viewModel().getDetail(seriesId)
+
+        }
+
+
+
+        val detailState by viewModel().detailState.collectAsStateWithLifecycle()
+
+        Box(
+            modifier = Modifier
+                .imePadding()
+                .fillMaxSize()
+        ) {
+            when (detailState) {
+                is UIState.OnError -> {
+                    val message = (detailState as UIState.OnError)?.message
+                    Text(
+                        text = message ?: "",
+                        Modifier.align(Alignment.Center),
+                        color = ColorWhite
+                    )
+                }
+
+                UIState.OnIdle -> Unit
+                UIState.OnLoading -> CircularProgressIndicator(
+                    color = ColorWhite,
+                    modifier = Modifier.align(Alignment.Center)
+                )
+
+                is UIState.OnSuccess<*> -> {
+                    val dataSuccess =
+                        (detailState as UIState.OnSuccess<*>).data as DetailModelResponse
+                    SuccessContent(dataSuccess.data)
+                }
+            }
+
+
+        }
+
+        /*if (showBottomSheet) {
+            Comments {
+                showBottomSheet = it
+            }
+        }*/
+    }
+
+    @Composable
+    private fun SuccessContent(data: DetailModelResponse.Data?) {
 
         AsyncImage(
-            model = "https://imgsrv.crunchyroll.com/cdn-cgi/image/fit=contain,format=auto,quality=85,width=480,height=720/catalog/crunchyroll/323c82257b2f6567fabbb7bd55bfa753.jpg",
+            model = data?.coverImageUrl,
+            contentDescription = null,
+            contentScale = ContentScale.Crop,
+            modifier = Modifier.fillMaxSize()
+        )
+
+        Column {
+            Box(
+                modifier = Modifier
+                    .fillMaxWidth()
+                    .height(400.dp)
+                    .background(
+                        brush = Brush.verticalGradient(
+                            colors = listOf(ColorTransparent, Color.Black)
+                        ),
+                    ),
+            )
+            Box(
+                modifier = Modifier
+                    .fillMaxSize()
+                    .background(
+                        color = ColorBlack,
+                    ),
+            )
+        }
+
+        LazyColumn(
+            horizontalAlignment = Alignment.CenterHorizontally,
+            modifier = Modifier.fillMaxSize()
+        ) {
+            item {
+                HeaderDetail(data)
+                Spacer(modifier = Modifier.height(15.dp))
+            }
+            item {
+                PosterAndTitle(data)
+                Spacer(modifier = Modifier.height(15.dp))
+            }
+            item {
+                GenreSlider(data?.taxonomy?.Genre)
+                Spacer(modifier = Modifier.height(15.dp))
+            }
+            item {
+                HiglightComment(data)
+                Spacer(modifier = Modifier.height(15.dp))
+            }
+            item {
+                ListChapterArea()
+                Spacer(modifier = Modifier.height(15.dp))
+            }
+            itemsIndexed(data?.chapters?.toList() ?: listOf())  { index, item ->
+                ChapterDetailItem(item)
+            }
+        }
+
+
+    }
+
+    @Composable
+    private fun PosterAndTitle(data: DetailModelResponse.Data?) {
+        val image = if (data?.portraitImageUrl.isNullOrEmpty()) data?.coverImageUrl
+        else data?.portraitImageUrl
+        AsyncImage(
+            model = image,
             contentDescription = null,
             contentScale = ContentScale.Crop,
             modifier = Modifier
@@ -174,15 +243,15 @@ class DetailActivity : BaseActivity() {
                 .clip(RoundedCornerShape(10.dp))
         )
 
-
         Spacer(modifier = Modifier.height(30.dp))
-        Text(text = "ダンダダン (Dandadan)", color = Color.White, fontSize = 15.sp)
+
+        Text(text = data?.title ?: "", color = Color.White, fontSize = 15.sp)
 
     }
 
     @OptIn(ExperimentalMaterial3Api::class)
     @Composable
-    private fun HeaderDetail() {
+    private fun HeaderDetail(data: DetailModelResponse.Data?) {
         Box(
             modifier = Modifier
                 .fillMaxWidth()
@@ -226,7 +295,7 @@ class DetailActivity : BaseActivity() {
                             contentDescription = null,
                             tint = primaryColor
                         )
-                        Text(text = "123", color = Color.White, fontSize = 15.sp)
+                        Text(text = data?.bookmarkCount.toString(), color = Color.White, fontSize = 15.sp)
                     }
                 }
 
@@ -259,7 +328,8 @@ class DetailActivity : BaseActivity() {
     private fun ListChapterArea() {
         Column {
             Row(
-                modifier = Modifier.fillMaxWidth()
+                modifier = Modifier
+                    .fillMaxWidth()
                     .padding(horizontal = 15.dp),
                 horizontalArrangement = Arrangement.SpaceBetween
             ) {
@@ -291,7 +361,7 @@ class DetailActivity : BaseActivity() {
 
     @OptIn(ExperimentalMaterial3Api::class)
     @Composable
-    private fun HiglightComment() {
+    private fun HiglightComment(data: DetailModelResponse.Data?) {
         Box(
             modifier = Modifier
                 .padding(horizontal = 15.dp)
@@ -375,7 +445,7 @@ class DetailActivity : BaseActivity() {
                             )
                             Spacer(modifier = Modifier.width(8.dp))
                             Text(
-                                text = "8.7", fontStyle = FontStyle.Normal,
+                                text = data?.userRating.toString() ?: "0", fontStyle = FontStyle.Normal,
                                 fontSize = 18.sp,
                                 maxLines = 2, overflow = TextOverflow.Ellipsis, color = ColorWhite
                             )
@@ -458,10 +528,12 @@ class DetailActivity : BaseActivity() {
 
 
     @Composable
-    private fun GenreSlider() {
-        Box(modifier = Modifier
-            .fillMaxWidth()
-            .height(50.dp)) {
+    private fun GenreSlider(genres: ArrayList<DetailModelResponse.Genre>?) {
+        Box(
+            modifier = Modifier
+                .fillMaxWidth()
+                .height(50.dp)
+        ) {
 
             LazyRow(
                 modifier = Modifier
@@ -469,14 +541,14 @@ class DetailActivity : BaseActivity() {
                     .align(alignment = Alignment.Center),
                 contentPadding = PaddingValues(5.dp)
             ) {
-                items(10) {
+                itemsIndexed(genres?.toList() ?:  listOf()) { index, item ->
                     Box(modifier = Modifier.padding(horizontal = 5.dp)) {
                         Button(
                             onClick = { /*TODO*/ },
                             shape = RoundedCornerShape(10.dp),
                             colors = ButtonDefaults.buttonColors(containerColor = backgroundItemColor)
                         ) {
-                            Text(text = "Comedy", color = ColorWhite, textAlign = TextAlign.Center)
+                            Text(text = item.name?: "", color = ColorWhite, textAlign = TextAlign.Center)
                         }
                     }
                 }
@@ -496,7 +568,7 @@ class DetailActivity : BaseActivity() {
                     ),
                 horizontalArrangement = Arrangement.Start,
                 verticalAlignment = Alignment.CenterVertically
-            ){
+            ) {
 
                 Spacer(modifier = Modifier.width(15.dp))
                 IconButton(
@@ -532,7 +604,7 @@ class DetailActivity : BaseActivity() {
                     ),
                 horizontalArrangement = Arrangement.End,
                 verticalAlignment = Alignment.CenterVertically
-            ){
+            ) {
                 IconButton(
                     onClick = { /*TODO*/ },
                     modifier = Modifier
@@ -553,4 +625,6 @@ class DetailActivity : BaseActivity() {
     }
 
 }
+
+
 

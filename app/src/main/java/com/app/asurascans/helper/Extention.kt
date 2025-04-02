@@ -7,7 +7,7 @@ import android.os.Bundle
 
 inline fun <reified T : Activity> Context.startNewActivity(
     extras: Bundle? = null,
-    flags: Int? = null
+    flags: Int? = Intent.FLAG_ACTIVITY_NEW_TASK
 ) {
     val intent = Intent(this, T::class.java)
     extras?.let { intent.putExtras(it) }

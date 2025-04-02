@@ -16,7 +16,6 @@ import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.layout.wrapContentHeight
 import androidx.compose.foundation.layout.wrapContentSize
-import androidx.compose.foundation.shape.CircleShape
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
@@ -33,9 +32,7 @@ import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import coil.compose.AsyncImage
 import com.app.asurascans.R
-import com.app.asurascans.helper.startNewActivity
-import com.app.asurascans.ui.screen.DetailActivity
-import com.app.asurascans.ui.theme.BackroundColor
+import com.app.asurascans.ui.screen.detail.DetailActivity
 import com.app.asurascans.ui.theme.ColorTransparent
 import com.app.asurascans.ui.theme.backgroundItemColor
 

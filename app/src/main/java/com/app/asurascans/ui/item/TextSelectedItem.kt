@@ -14,19 +14,20 @@ import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import com.app.asurascans.ui.theme.BackroundColor
+import com.app.asurascans.ui.theme.ColorWhite
 import com.app.asurascans.ui.theme.primaryColor
 import com.app.asurascans.ui.theme.primaryColorSelected
 
 @Composable
-fun TextSelectedItem(value: String? = "this", index:Int, indexSelected: Int, onClick : (Int) ->Unit ?={}) {
+fun TextSelectedItem(value: String? = "this", index:Int, indexSelected: Int, onClick : (Int)->Unit ) {
     Column(modifier = Modifier.wrapContentWidth().clickable {
-        onClick.invoke(index)
+        onClick(index)
     },
         horizontalAlignment = Alignment.CenterHorizontally) {
-        Text(text =value ?: "", color = if (index==indexSelected) primaryColorSelected else BackroundColor, fontSize = 15.sp,
+        Text(text =value ?: "", color = if (index==indexSelected) primaryColorSelected else ColorWhite, fontSize = 15.sp,
             modifier = Modifier.padding(horizontal = 5.dp),)
         Divider(thickness = 3.dp,
-            color = primaryColor,
+            color = if (index==indexSelected) primaryColor else BackroundColor,
             modifier = Modifier.width(10.dp))
     }
 }

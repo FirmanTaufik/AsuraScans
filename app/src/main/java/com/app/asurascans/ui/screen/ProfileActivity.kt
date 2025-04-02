@@ -7,6 +7,7 @@ import androidx.compose.foundation.border
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
+import androidx.compose.foundation.layout.PaddingValues
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxSize
@@ -41,9 +42,11 @@ import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
+import androidx.navigation.NavHostController
 import coil.compose.AsyncImage
 import com.app.asurascans.R
 import com.app.asurascans.core.BaseActivity
+import com.app.asurascans.core.BaseViewModel
 import com.app.asurascans.datas.LevelItemData
 import com.app.asurascans.ui.item.Leveltem
 import com.app.asurascans.ui.theme.ColorBlack
@@ -53,9 +56,15 @@ import com.app.asurascans.ui.theme.backgroundItemColor
 import com.app.asurascans.ui.theme.primaryColor
 
 class ProfileActivity : BaseActivity() {
+
+
+
+
     @SuppressLint("UnusedMaterial3ScaffoldPaddingParameter", "MutableCollectionMutableState")
     @Composable
-    override fun ScreenContent() {
+    override fun BaseContent(
+        paddingValues: PaddingValues,
+    ) {
 
         val levels by remember { mutableStateOf(arrayListOf<LevelItemData>()) }
         repeat(5){

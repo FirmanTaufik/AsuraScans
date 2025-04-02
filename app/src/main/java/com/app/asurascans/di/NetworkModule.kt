@@ -33,6 +33,14 @@ class NetworkModule {
         return PreferencesImp(context)
     }*/
 
+
+    @Provides
+    @Singleton // Pastikan hanya ada satu instance di aplikasi
+    fun provideSnackbarManager(): SnackbarManager {
+        return SnackbarManager()
+    }
+
+
     @Singleton
     @Provides
     fun providesRetrofit(
@@ -40,7 +48,7 @@ class NetworkModule {
        /* providePreferences: PreferencesClient*/
     ): Retrofit {
         return Retrofit.Builder()
-            .baseUrl("https://restdev.mangaevo.net/api/")
+            .baseUrl("https://restdev.mangaevo.net/")
              .client(okHttp(context/*, providePreferences*/))
             .addConverterFactory(ScalarsConverterFactory.create())
             .addConverterFactory(GsonConverterFactory.create())

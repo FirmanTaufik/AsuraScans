@@ -15,11 +15,8 @@ import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.layout.wrapContentHeight
-import androidx.compose.foundation.layout.wrapContentSize
 import androidx.compose.foundation.lazy.LazyColumn
-import androidx.compose.foundation.lazy.LazyRow
 import androidx.compose.foundation.shape.RoundedCornerShape
-import androidx.compose.material3.BottomAppBar
 import androidx.compose.material3.Button
 import androidx.compose.material3.ButtonDefaults
 import androidx.compose.material3.Divider
@@ -34,17 +31,22 @@ import androidx.compose.ui.layout.ContentScale
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.dp
+import androidx.navigation.NavHostController
 import coil.compose.AsyncImage
 import com.app.asurascans.R
 import com.app.asurascans.core.BaseActivity
+import com.app.asurascans.core.BaseViewModel
 import com.app.asurascans.ui.theme.ColorButtonRefreshReadChapter
 import com.app.asurascans.ui.theme.ColorGrey
 import com.app.asurascans.ui.theme.ShimmerColor
-import com.app.asurascans.ui.theme.grayColor
 
 class ReadActivity : BaseActivity() {
+
+
     @Composable
-    override fun ScreenContent() {
+    override fun BaseContent(
+        paddingValues: PaddingValues
+    ) {
         Column(modifier = Modifier.fillMaxSize()) {
             Row(
                 modifier = Modifier
