@@ -196,7 +196,7 @@ fun LatestUpdateItemsGrid(data: UpdateModelResponse, homeVm: HomeVM) {
         horizontalArrangement = Arrangement.SpaceBetween
     ) {
         list.forEach {
-            LastUpdateGridItem(it)
+            LastUpdateGridItem(data = it)
         }
     }
 }

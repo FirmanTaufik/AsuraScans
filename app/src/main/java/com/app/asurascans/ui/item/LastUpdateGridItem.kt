@@ -106,7 +106,7 @@ fun LastUpdateGridItem(modifier: Modifier = Modifier, showChapter : Boolean ?= t
                         )
                         Spacer(modifier = Modifier.width(3.dp))
                         Text(
-                            text = data?.userRating, color = Color.White, fontWeight = FontWeight.Bold,
+                            text = data?.userRating.toString(), color = Color.White, fontWeight = FontWeight.Bold,
                             fontSize = 15.sp
                         )
                     }
