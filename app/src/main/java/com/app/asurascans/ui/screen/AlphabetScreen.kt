@@ -51,7 +51,7 @@ fun AlphabetScreen(modifier: Modifier = Modifier) {
             horizontalArrangement = Arrangement.SpaceBetween
         ) {
             itemsIndexed(topList) { i, value ->
-                TextSelectedItem(value, i, 0)
+                TextSelectedItem(value, 0,0){}
             }
         }
         Spacer(modifier = Modifier.height(15.dp))

@@ -1,5 +1,8 @@
 package com.app.asurascans.ui.screen.home
 
+import android.content.Intent
+import android.os.Bundle
+import android.util.Log
 import androidx.compose.foundation.Image
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Arrangement
@@ -56,6 +59,11 @@ import com.app.asurascans.ui.theme.ColorBlack
 import com.app.asurascans.ui.theme.ColorWhite
 import com.app.asurascans.ui.theme.primaryColor
 import androidx.compose.runtime.collectAsState
+import androidx.compose.runtime.mutableIntStateOf
+import androidx.compose.runtime.rememberCoroutineScope
+import com.app.asurascans.helper.Constant
+import com.app.asurascans.helper.startNewActivity
+import com.app.asurascans.ui.screen.detail.DetailActivity
 
 
 @OptIn(ExperimentalMaterial3Api::class)
@@ -65,13 +73,19 @@ fun HomeScreen(modifier: Modifier = Modifier, homeVm: HomeVM) {
     val state = rememberLazyListState()
     var isGridLatestupdate by remember { mutableStateOf(true) }
 
+    val snackbarMessagState by  homeVm?.snackbarMessage?.collectAsStateWithLifecycle()
+        ?: remember { mutableStateOf(UIState.OnIdle) }
+    Log.d("FirmanTAG", "HomeScreen: ${snackbarMessagState} ")
+
     LaunchedEffect(key1 = true) {
         homeVm.getHome()
     }
     val resposeState by homeVm.homeState.collectAsStateWithLifecycle()
 
-    LazyColumn(state = state,
-        horizontalAlignment = Alignment.CenterHorizontally) {
+    LazyColumn(
+        state = state,
+        horizontalAlignment = Alignment.CenterHorizontally
+    ) {
         item {
             Column(modifier = modifier.wrapContentSize()) {
                 Spacer(modifier = Modifier.height(10.dp))
@@ -89,19 +103,22 @@ fun HomeScreen(modifier: Modifier = Modifier, homeVm: HomeVM) {
                 isGridLatestupdate = it
             }
         }
-        when(resposeState) {
-            is UIState.OnError ->  {
+        when (resposeState) {
+            is UIState.OnError -> {
 
             }
+
             UIState.OnIdle -> {
 
             }
+
             UIState.OnLoading -> {
                 item {
                     CircularProgressIndicator(color = ColorWhite)
                 }
             }
-            is UIState.OnSuccess<*>  -> {
+
+            is UIState.OnSuccess<*> -> {
                 val data = (resposeState as UIState.OnSuccess<*>).data as UpdateModelResponse
                 if (isGridLatestupdate) {
 
@@ -123,11 +140,13 @@ fun HomeScreen(modifier: Modifier = Modifier, homeVm: HomeVM) {
 
         item {
             Button(
-                onClick = { /*TODO*/ },
+                onClick = { homeVm.showSnackbar("sasasa", false) },
                 colors = ButtonDefaults.buttonColors(containerColor = primaryColor)
             ) {
                 Text(
-                    text = "Lihat lebih banyak komik", color = ColorBlack, fontWeight = FontWeight.Bold,
+                    text = "Lihat lebih banyak komik",
+                    color = ColorBlack,
+                    fontWeight = FontWeight.Bold,
                     fontSize = 18.sp
                 )
             }
@@ -150,34 +169,38 @@ fun HomeScreen(modifier: Modifier = Modifier, homeVm: HomeVM) {
 
 @Composable
 fun NewLatestadded() {
-   Row (modifier = Modifier
-       .fillMaxWidth()
-       .padding(horizontal = 10.dp),
-       verticalAlignment = Alignment.CenterVertically,
-       horizontalArrangement = Arrangement.SpaceBetween){
-       Text(
-           text = "Baru di tambahkan",
-           modifier = Modifier.weight(1f), fontWeight = FontWeight.Bold,
-           fontSize = 18.sp
-       )
+    Row(
+        modifier = Modifier
+            .fillMaxWidth()
+            .padding(horizontal = 10.dp),
+        verticalAlignment = Alignment.CenterVertically,
+        horizontalArrangement = Arrangement.SpaceBetween
+    ) {
+        Text(
+            text = "Baru di tambahkan",
+            modifier = Modifier.weight(1f), fontWeight = FontWeight.Bold,
+            fontSize = 18.sp
+        )
 
-       Button(
-           onClick = { /*TODO*/ },
-           colors = ButtonDefaults.buttonColors(containerColor = primaryColor)
-       ) {
-           Text(
-               text = "More", color = ColorBlack, fontWeight = FontWeight.Bold,
-               fontSize = 18.sp
-           )
-       }
-   }
+        Button(
+            onClick = { /*TODO*/ },
+            colors = ButtonDefaults.buttonColors(containerColor = primaryColor)
+        ) {
+            Text(
+                text = "More", color = ColorBlack, fontWeight = FontWeight.Bold,
+                fontSize = 18.sp
+            )
+        }
+    }
 
     Spacer(modifier = Modifier.height(15.dp))
 
-    LazyRow (modifier = Modifier
-        .fillMaxWidth()
-        .padding(horizontal = 10.dp)){
-        items(10){
+    LazyRow(
+        modifier = Modifier
+            .fillMaxWidth()
+            .padding(horizontal = 10.dp)
+    ) {
+        items(10) {
             MostViewItem(true)
         }
     }
@@ -187,7 +210,7 @@ fun NewLatestadded() {
 @Composable
 fun LatestUpdateItemsGrid(data: UpdateModelResponse, homeVm: HomeVM) {
     val scrollStateLatestUpdate = rememberLazyListState()
-    val list by remember{ mutableStateOf(homeVm.itemsSelected ) }
+    val list = homeVm.itemsSelected.collectAsStateWithLifecycle()
     FlowRow(
         maxItemsInEachRow = 3,
         modifier = Modifier
@@ -195,8 +218,12 @@ fun LatestUpdateItemsGrid(data: UpdateModelResponse, homeVm: HomeVM) {
             .padding(7.dp),
         horizontalArrangement = Arrangement.SpaceBetween
     ) {
-        list.forEach {
-            LastUpdateGridItem(data = it)
+        list.value.forEach {
+            LastUpdateGridItem(data = it) { seriesId ->
+                val bundle = Bundle()
+                bundle.putString(Constant.SERIES_ID, seriesId)
+                homeVm.context.startNewActivity<DetailActivity>(bundle)
+            }
         }
     }
 }
@@ -221,7 +248,9 @@ private fun MostView(modifier: Modifier = Modifier) {
             modifier = Modifier.wrapContentSize(),
         ) {
             itemsIndexed(listTop) { i, value ->
-                TextSelectedItem(value,i, 0)
+                TextSelectedItem(value, i, 0) {
+
+                }
             }
         }
     }
@@ -241,10 +270,11 @@ private fun MostView(modifier: Modifier = Modifier) {
 
 
 @Composable
-private fun LatestUpdateHeader(homeVm: HomeVM,  onChangeList: (Boolean) -> Unit) {
+private fun LatestUpdateHeader(homeVm: HomeVM, onChangeList: (Boolean) -> Unit) {
 
     val listBottom = homeVm.listBottom
-    val indexSelected by remember { mutableStateOf(homeVm.itemTypeBottomSelectedIndex.value) }
+    // var indexSelected by remember { mutableIntStateOf(homeVm.itemTypeBottomSelectedIndex) }
+    var indexselected = homeVm.itemTypeBottomSelectedIndex.collectAsStateWithLifecycle()
     Text(
         text = stringResource(id = R.string.last_update),
         modifier = Modifier
@@ -261,8 +291,8 @@ private fun LatestUpdateHeader(homeVm: HomeVM,  onChangeList: (Boolean) -> Unit)
     ) {
         LazyRow(modifier = Modifier.weight(1f)) {
             itemsIndexed(listBottom) { i, value ->
-                TextSelectedItem(value,i, indexSelected) {
-                    homeVm.setItemTypeBottomSelectedIndex(it)
+                TextSelectedItem(value, i, indexselected.value) { valueClick ->
+                    homeVm.setItemTypeBottomSelectedIndex(valueClick)
                 }
             }
         }

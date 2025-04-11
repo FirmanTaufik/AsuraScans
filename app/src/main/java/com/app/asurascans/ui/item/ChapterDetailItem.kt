@@ -33,6 +33,7 @@ import androidx.compose.ui.unit.sp
 import coil.compose.AsyncImage
 import com.app.asurascans.R
 import com.app.asurascans.ui.screen.ReadActivity
+import com.app.asurascans.ui.screen.detail.DetailModelResponse
 import com.app.asurascans.ui.theme.ColorBlack
 import com.app.asurascans.ui.theme.ColorButtonRefreshReadChapter
 import com.app.asurascans.ui.theme.ColorWhite
@@ -40,7 +41,7 @@ import com.app.asurascans.ui.theme.primaryColor
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
-fun ChapterDetailItem() {
+fun ChapterDetailItem(item: DetailModelResponse.Chapters) {
     val context = LocalContext.current
     Column {
         Row(
@@ -73,7 +74,7 @@ fun ChapterDetailItem() {
                 ) {
                     // Cover Image
                     AsyncImage(
-                        model = "https://imgsrv.crunchyroll.com/cdn-cgi/image/fit=contain,format=auto,quality=85,width=480,height=720/catalog/crunchyroll/323c82257b2f6567fabbb7bd55bfa753.jpg",
+                        model = item.thumbnailImageUrl,
                         contentDescription = "Manga Cover",
                         modifier = Modifier
                             .width(80.dp),
@@ -90,9 +91,10 @@ fun ChapterDetailItem() {
                     ) {
 
                         Row(verticalAlignment = Alignment.CenterVertically) {
+                            val title = if ( item.chapterTitle.isNullOrEmpty()) "Chapter ${item.chapterNumber}" else item.chapterTitle ?: ""
                             Column(modifier = Modifier.weight(1f)) {
                                 Text(
-                                    text = "Chapter 69",
+                                    text = title,
                                     fontSize = 16.sp,
                                     fontWeight = FontWeight.Bold,
                                     color = MaterialTheme.colorScheme.onSurface,
@@ -101,15 +103,17 @@ fun ChapterDetailItem() {
                                 )
 
                                 Text(
-                                    text = "1 jam yang lalu",
+                                    text = item.updatedAt ?:"",
                                     fontSize = 14.sp,
-                                    color = MaterialTheme.colorScheme.onSurfaceVariant
+                                    color = MaterialTheme.colorScheme.onSurfaceVariant,
+                                    maxLines = 1,
+                                    overflow = TextOverflow.Ellipsis
                                 )
                             }
 
 
-                            IconButton(
-                                onClick = { /*TODO*/ },
+                            /*IconButton(
+                                onClick = { *//*TODO*//* },
                                 modifier = Modifier
                                     .size(40.dp),
                                 colors = IconButtonDefaults.iconButtonColors(
@@ -123,7 +127,7 @@ fun ChapterDetailItem() {
                                     tint = ColorWhite,
                                     modifier = Modifier.size(20.dp)
                                 )
-                            }
+                            }*/
                             Spacer(modifier = Modifier.width(5.dp))
                             // Continue Button
                             Card(

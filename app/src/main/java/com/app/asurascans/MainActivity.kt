@@ -1,13 +1,17 @@
 package com.app.asurascans
 
+import android.Manifest
 import android.annotation.SuppressLint
 import android.content.Intent
+import android.util.Log
+import androidx.activity.viewModels
 import androidx.compose.animation.AnimatedVisibility
 import androidx.compose.foundation.background
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
+import androidx.compose.foundation.layout.PaddingValues
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxWidth
@@ -22,10 +26,8 @@ import androidx.compose.material3.IconButton
 import androidx.compose.material3.IconButtonDefaults
 import androidx.compose.material3.NavigationBarItem
 import androidx.compose.material3.NavigationBarItemDefaults
-import androidx.compose.material3.Scaffold
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
-import androidx.compose.runtime.getValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.platform.LocalContext
@@ -37,10 +39,10 @@ import androidx.navigation.NavController
 import androidx.navigation.NavHostController
 import androidx.navigation.compose.NavHost
 import androidx.navigation.compose.composable
-import androidx.navigation.compose.currentBackStackEntryAsState
 import androidx.navigation.compose.rememberNavController
 import coil.compose.AsyncImage
 import com.app.asurascans.core.BaseActivity
+import com.app.asurascans.core.BaseViewModel
 import com.app.asurascans.helper.tittleBoard
 import com.app.asurascans.ui.navigation.NavigationItem
 import com.app.asurascans.ui.screen.AlphabetScreen
@@ -50,6 +52,7 @@ import com.app.asurascans.ui.screen.home.HomeScreen
 import com.app.asurascans.ui.screen.SearchActivity
 import com.app.asurascans.ui.screen.ProfileActivity
 import com.app.asurascans.ui.screen.SettingScreen
+import com.app.asurascans.ui.screen.detail.DetailVM
 import com.app.asurascans.ui.screen.home.HomeVM
 import com.app.asurascans.ui.theme.AsuraScansTheme
 import com.app.asurascans.ui.theme.BackroundColor
@@ -59,69 +62,47 @@ import com.app.asurascans.ui.theme.primaryColor
 
 class MainActivity : BaseActivity() {
 
+
+    private val items = listOf(
+        NavigationItem.Home,
+        NavigationItem.List,
+        NavigationItem.Discover,
+        NavigationItem.History,
+        NavigationItem.Setting
+    )
+
+
+/*
+    @Composable
+    override fun  viewModel() = hiltViewModel< HomeVM>()
+*/
+override fun viewModel(): HomeVM {
+    val viewModel :HomeVM by viewModels()
+    return viewModel
+}
+
+
     @SuppressLint("UnusedMaterial3ScaffoldPaddingParameter")
     @Composable
-    override fun ScreenContent() {
-        val navController = rememberNavController()
-        val navBackStackEntry by navController.currentBackStackEntryAsState()
-        val currentRoute = navBackStackEntry?.destination?.route
+    override fun BaseContent(
+        paddingValues: PaddingValues,
+    ) {
 
-        val items = listOf(
-            NavigationItem.Home,
-            NavigationItem.List,
-            NavigationItem.Discover,
-            NavigationItem.History,
-            NavigationItem.Setting
-        )
-
-        Scaffold(
-            topBar = {
-                Header(currentRoute, items)
-            },
-            bottomBar = {
-                BottomNavigationBar(
-                    navController = navController,
-                    currentRoute, items
-                )
-            },
-            content = {
-                SetupNavGraph(navHostController = navController, Modifier.padding(it))
-            },
-            floatingActionButton = {
-                AnimatedVisibility(visible = currentRoute == items.first().route) {
-                    IconButton(
-                        onClick = { /*TODO*/ },
-                        modifier = Modifier
-                            .size(60.dp),
-                        colors = IconButtonDefaults.iconButtonColors(
-                            contentColor = ColorBlack,
-                            containerColor = primaryColor
-                        )
-                    ) {
-                        Icon(
-                            painter = painterResource(id = R.drawable.ic_refresh),
-                            contentDescription = null,
-                            tint = ColorBlack,
-                            modifier = Modifier.size(40.dp)
-                        )
-                    }
-                }
-            })
-
-
-    }
-
-    @Composable
-    private fun SetupNavGraph(navHostController: NavHostController, modif: Modifier) {
-        val homeVm = hiltViewModel<HomeVM>()
-        Column(modif.background(BackroundColor)) {
+        val currentRoute = getBaseCurrentRouteNavigation()
+        requestPermissions(Manifest.permission.POST_NOTIFICATIONS)
+        return  Column(
+            Modifier
+                .padding(paddingValues)
+                .background(BackroundColor)) {
             //    Header()
             NavHost(
-                navController = navHostController,
+                navController = getBaseRememberNavController(),
                 startDestination = NavigationItem.Home.route
             ) {
+
+
                 composable(NavigationItem.Home.route) {
-                    HomeScreen(modifier = Modifier.weight(1f),homeVm)
+                    HomeScreen(modifier = Modifier.weight(1f) , viewModel())
                 }
                 composable(NavigationItem.List.route) {
                     AlphabetScreen(modifier = Modifier.weight(1f))
@@ -141,120 +122,154 @@ class MainActivity : BaseActivity() {
                         HomeScreen(modifier = Modifier.weight(1f))*/
         }
     }
-}
 
-
-@Composable
-private fun Header(currentRoute: String?, items: List<NavigationItem>) {
-    val context = LocalContext.current
-    Column {
-        Box(modifier = Modifier.fillMaxWidth()) {
-            Row(
-                modifier = Modifier
-                    .background(BackroundColor)
-                    .padding(vertical = 5.dp, horizontal = 10.dp)
-                    .fillMaxWidth(),
-                verticalAlignment = Alignment.CenterVertically,
-                horizontalArrangement = Arrangement.SpaceBetween
-            ) {
-                Box(
-                    modifier = Modifier
-                        .wrapContentSize()
-                ) {
-                    AsyncImage(
-                        model = R.drawable.ic_small_app, contentDescription = null,
-                        modifier = Modifier.size(50.dp)
-                    )
-                    //  Icon(painter = painterResource(id = R.drawable.ic_small_app), contentDescription =null )
-                }
-
+    @Composable
+    override fun BaseTopBar() {
+        val context = LocalContext.current
+        Column {
+            Box(modifier = Modifier.fillMaxWidth()) {
                 Row(
-                    modifier = Modifier.wrapContentSize(),
-                    verticalAlignment = Alignment.CenterVertically
+                    modifier = Modifier
+                        .background(BackroundColor)
+                        .padding(vertical = 5.dp, horizontal = 10.dp)
+                        .fillMaxWidth(),
+                    verticalAlignment = Alignment.CenterVertically,
+                    horizontalArrangement = Arrangement.SpaceBetween
                 ) {
-                    IconButton(
-                        onClick = {
-                            context.startActivity(Intent(context, SearchActivity::class.java))
-                        },
-                        modifier = Modifier.size(25.dp)
-                    ) {
-                        Icon(
-                            painter = painterResource(id = R.drawable.ic_search),
-                            contentDescription = null
-                        )
-                    }
-                    Spacer(modifier = Modifier.width(5.dp))
-                    IconButton(
-                        onClick = { /*TODO*/ },
-                        modifier = Modifier.size(25.dp)
-                    ) {
-                        Icon(
-                            painter = painterResource(id = R.drawable.ic_notif),
-                            contentDescription = null
-                        )
-                    }
-                    Spacer(modifier = Modifier.width(5.dp))
-                    AsyncImage(
-                        model = R.drawable.ic_person, contentDescription = null,
+                    Box(
                         modifier = Modifier
-                            .size(35.dp)
-                            .clickable {
-                                context.startActivity(Intent(context, ProfileActivity::class.java))
-                            }
-                    )
+                            .wrapContentSize()
+                    ) {
+                        AsyncImage(
+                            model = R.drawable.ic_small_app, contentDescription = null,
+                            modifier = Modifier.size(50.dp)
+                        )
+                        //  Icon(painter = painterResource(id = R.drawable.ic_small_app), contentDescription =null )
+                    }
+
+                    Row(
+                        modifier = Modifier.wrapContentSize(),
+                        verticalAlignment = Alignment.CenterVertically
+                    ) {
+                        IconButton(
+                            onClick = {
+                                context.startActivity(Intent(context, SearchActivity::class.java))
+                            },
+                            modifier = Modifier.size(25.dp)
+                        ) {
+                            Icon(
+                                painter = painterResource(id = R.drawable.ic_search),
+                                contentDescription = null
+                            )
+                        }
+                        Spacer(modifier = Modifier.width(5.dp))
+                        IconButton(
+                            onClick = { /*TODO*/ },
+                            modifier = Modifier.size(25.dp)
+                        ) {
+                            Icon(
+                                painter = painterResource(id = R.drawable.ic_notif),
+                                contentDescription = null
+                            )
+                        }
+                        Spacer(modifier = Modifier.width(5.dp))
+                        AsyncImage(
+                            model = R.drawable.ic_person, contentDescription = null,
+                            modifier = Modifier
+                                .size(35.dp)
+                                .clickable {
+                                    context.startActivity(
+                                        Intent(
+                                            context,
+                                            ProfileActivity::class.java
+                                        )
+                                    )
+                                }
+                        )
+                    }
+
                 }
 
+                val name = items.find { it.route == getBaseCurrentRouteNavigation() }?.title
+
+                tittleBoard(
+                    name ?: "",
+                    Modifier
+                        .wrapContentSize()
+                        .align(Alignment.Center)
+                )
             }
+            Divider()
+        }
+    }
 
-            val name = items.find { it.route == currentRoute }?.title
+    @Composable
+    override fun BaseBottomBar() {
+        val currentRoute = getBaseCurrentRouteNavigation()
+        val navController= getBaseRememberNavController()
+        BottomAppBar {
 
-            tittleBoard(
-                name ?: "",
-                Modifier
-                    .wrapContentSize()
-                    .align(Alignment.Center)
+            items.forEach { item ->
+                Log.d("NavigationItem", "Route: ${item.route}, Title: ${item.title}")
+                Log.d("CurrentRoute", "Current Route: $currentRoute")
+
+                NavigationBarItem(
+                    icon = {
+                        Icon(
+                            painterResource(id = item.icon),
+                            modifier = Modifier.size(25.dp),
+                            contentDescription = item.title
+                        )
+                    },
+                    label = { Text(text = item.title) },
+                    alwaysShowLabel = false,
+                    selected = currentRoute == item.route,
+                    colors = NavigationBarItemDefaults.colors(
+                        unselectedIconColor = ColorButtonRefreshReadChapter,
+                        unselectedTextColor = ColorButtonRefreshReadChapter,
+                        selectedTextColor = primaryColor,
+                        selectedIconColor = primaryColor
+                    ),
+                    onClick = {
+                        showFloatActionButton =  item.route == items.first().route
+                        Log.d("NavigationClick", "Navigating to: ${item.route}")
+                        navController.navigate(item.route)
+                    }
+                )
+            }
+        }
+
+    }
+
+
+    @Composable
+    override fun BaseFloatingActionButton()  {
+        IconButton(
+            onClick = { /*TODO*/ },
+            modifier = Modifier
+                .size(60.dp),
+            colors = IconButtonDefaults.iconButtonColors(
+                contentColor = ColorBlack,
+                containerColor = primaryColor
+            )
+        ) {
+            Icon(
+                painter = painterResource(id = R.drawable.ic_refresh),
+                contentDescription = null,
+                tint = ColorBlack,
+                modifier = Modifier.size(40.dp)
             )
         }
-        Divider()
+       /*  AnimatedVisibility(visible = getBaseCurrentRouteNavigation() == items.first().route) {
+
+        }*/
     }
 }
 
-@Composable
-fun BottomNavigationBar(
-    navController: NavController,
-    currentRoute: String?,
-    items: List<NavigationItem>
-) {
 
-    BottomAppBar {
 
-        items.forEach { item ->
-            NavigationBarItem(
-                icon = {
-                    Icon(
-                        painterResource(id = item.icon),
-                        modifier = Modifier.size(25.dp),
-                        contentDescription = item.title
-                    )
-                },
-                label = { Text(text = item.title) },
-                alwaysShowLabel = false,
-                selected = currentRoute == item.route,
 
-                colors = NavigationBarItemDefaults.colors(
-                    unselectedIconColor = ColorButtonRefreshReadChapter,
-                    unselectedTextColor = ColorButtonRefreshReadChapter,
-                    selectedTextColor = primaryColor,
-                    selectedIconColor = primaryColor
-                ),
-                onClick = {
-                    navController.navigate(item.route)
-                    /* Add code later */
-                }
-            )
-        }
-    }
-}
+
 
 @Preview(showBackground = true)
 @Composable

@@ -1,15 +1,16 @@
 package com.app.asurascans.ui.screen.home
 
+import com.app.asurascans.core.BaseModelResponse
 import com.google.gson.annotations.SerializedName
 
-data class UpdateModelResponse(
+data class UpdateModelResponse  (
 
-    @SerializedName("retcode" ) var retcode : Int?    = null,
-    @SerializedName("message" ) var message : String? = null,
-    @SerializedName("meta"    ) var meta    : Meta?   = Meta(),
-    @SerializedName("data"    ) var data    : Data?   = Data()
-){
+    @SerializedName("data"    ) var data    : Data?   = Data(),
+    override var retcode: Long,
+    override var message: String,
+    override var meta: BaseModelResponse.Meta?
 
+):BaseModelResponse{
 
     data class Data (
 
@@ -17,14 +18,6 @@ data class UpdateModelResponse(
         @SerializedName("manga"  ) var manga  : ArrayList<List>  = arrayListOf(),
         @SerializedName("manhwa" ) var manhwa : ArrayList<List> = arrayListOf(),
         @SerializedName("manhua" ) var manhua : ArrayList<List> = arrayListOf()
-
-    )
-
-    data class Meta (
-
-        @SerializedName("request_id"   ) var requestId   : String? = null,
-        @SerializedName("timestamp"    ) var timestamp   : Int?    = null,
-        @SerializedName("process_time" ) var processTime : String? = null
 
     )
 
@@ -43,12 +36,22 @@ data class UpdateModelResponse(
         @SerializedName("latest_chapter_id"     ) var latestChapterId     : String?           = null,
         @SerializedName("latest_chapter_number" ) var latestChapterNumber : Int?              = null,
         @SerializedName("latest_chapter_time"   ) var latestChapterTime   : String?           = null,
-        @SerializedName("chapters"              ) var chapters            : ArrayList<String> = arrayListOf(),
+        @SerializedName("chapters"              ) var chapters            : ArrayList<Chapters> = arrayListOf(),
         @SerializedName("type"                  ) var type                : String?           = null,
         @SerializedName("bookmark_count"        ) var bookmarkCount       : Int?              = null,
         @SerializedName("created_at"            ) var createdAt           : String?           = null,
         @SerializedName("updated_at"            ) var updatedAt           : String?           = null,
         @SerializedName("deleted_at"            ) var deletedAt           : String?           = null
+
+    )
+
+    data class Chapters (
+
+        @SerializedName("chapter_id"          ) var chapterId         : String? = null,
+        @SerializedName("chapter_number"      ) var chapterNumber     : Int?    = null,
+        @SerializedName("chapter_title"       ) var chapterTitle      : String? = null,
+        @SerializedName("thumbnail_image_url" ) var thumbnailImageUrl : String? = null,
+        @SerializedName("chapter_time"        ) var chapterTime       : String? = null
 
     )
 }
