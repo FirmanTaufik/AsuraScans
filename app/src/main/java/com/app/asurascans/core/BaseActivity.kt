@@ -27,6 +27,7 @@ import androidx.compose.material3.SnackbarHostState
 import androidx.compose.material3.SnackbarResult
 import androidx.compose.material3.Surface
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
@@ -49,6 +50,7 @@ import com.app.asurascans.ui.theme.BackroundColor
 import com.app.asurascans.ui.theme.ColorNav
 import dagger.hilt.android.AndroidEntryPoint
 import kotlinx.coroutines.launch
+import androidx.compose.runtime.rememberUpdatedState
 
 @AndroidEntryPoint
 abstract class BaseActivity : ComponentActivity() {
@@ -106,6 +108,9 @@ abstract class BaseActivity : ComponentActivity() {
     fun getBaseCurrentRouteNavigation() = getBaseNavBackStackEntry()?.destination?.route
 
     @Composable
+    protected open fun OnInitViewCompose(): Unit? = null
+
+    @Composable
     protected open fun BaseContent(
         paddingValues: PaddingValues,
     ): Unit? = null
@@ -121,8 +126,6 @@ abstract class BaseActivity : ComponentActivity() {
 
     @Composable
     protected open fun BaseBottomsheet(): Unit? = null
-
-    var showFloatActionButton by mutableStateOf(false)
 
     @SuppressLint("CoroutineCreationDuringComposition", "UnusedMaterial3ScaffoldPaddingParameter")
     override fun onCreate(savedInstanceState: Bundle?) {
@@ -161,6 +164,7 @@ abstract class BaseActivity : ComponentActivity() {
     @Composable
     fun BaseScaffold(modifier: Modifier, vm: BaseViewModel?) {
         val bottomSheetState = vm?.bottomSheetState
+        val showFab = vm?.showFab
         getSnackbar(vm, Modifier)
 
         Surface(
@@ -168,12 +172,6 @@ abstract class BaseActivity : ComponentActivity() {
             color = MaterialTheme.colorScheme.background
         ) {
             Scaffold(
-              /*  snackbarHost = {
-                    SnackbarHost(
-                        hostState = getSnackbar(vm),
-                        modifier = Modifier.wrapContentSize()
-                    )
-                },*/
                 topBar = {
                     BaseTopBar()
                 },
@@ -190,24 +188,33 @@ abstract class BaseActivity : ComponentActivity() {
 
                 },
                 floatingActionButton = {
-                    AnimatedVisibility(visible = false,
-                        modifier = Modifier.wrapContentSize()) {
+                    if (showFab?.value==true) {
                         BaseFloatingActionButton()
                     }
-
                 }
             )
 
         }
 
         getSnackbar(vm = vm, Modifier)
+        OnInitViewCompose()
     }
 
     @SuppressLint("CoroutineCreationDuringComposition")
     @Composable
-    private fun getSnackbar(vm: BaseViewModel?, modifier: Modifier,): SnackbarHostState {
+    private fun getSnackbar(vm: BaseViewModel?, modifier: Modifier): SnackbarHostState {
         val snackbarHostState = remember { SnackbarHostState() }
-        var snackBarComtent =  SnackbarDefaults.contentColor
+        val snackbarMessageState by vm?.snackbarMessage?.collectAsStateWithLifecycle()
+            ?: remember { mutableStateOf(UIState.OnIdle) }
+
+        val snackBarContentColor = rememberUpdatedState(
+            when (snackbarMessageState) {
+                is UIState.OnError -> Color.Red
+                is UIState.OnSuccess<*> -> Color.Green
+                else -> SnackbarDefaults.contentColor
+            }
+        )
+
         Box(modifier = modifier.zIndex(1f)) {
             SnackbarHost(
                 hostState = snackbarHostState,
@@ -217,47 +224,32 @@ abstract class BaseActivity : ComponentActivity() {
                         modifier = Modifier
                             .padding(top = 50.dp)
                             .align(Alignment.TopStart),
-                        containerColor =snackBarComtent ,
-                        contentColor = Color.White // Change this to your desired position
+                        containerColor = snackBarContentColor.value,
+                        contentColor = Color.White
                     )
                 }
             )
         }
 
-
-        val coroutineScope = rememberCoroutineScope()
-        val snackbarMessagState by vm?.snackbarMessage?.collectAsStateWithLifecycle()
-            ?: remember { mutableStateOf(UIState.OnIdle) }
-
-        when (snackbarMessagState) {
-            is UIState.OnError -> {
-                snackBarComtent = Color.Red
-                val msg = (snackbarMessagState as UIState.OnError).message
-                coroutineScope.launch {
-                   snackbarHostState.showSnackbar(
-                        message = msg ?: "",
-                        //   actionLabel = "Action",
-
-                    )
-                }
-            }
-
-            is UIState.OnSuccess<*> -> {
-                val msg = (snackbarMessagState as UIState.OnSuccess<*>).data.toString()
-                snackBarComtent = Color.Green
-                coroutineScope.launch {
+        LaunchedEffect(snackbarMessageState) {
+            when (snackbarMessageState) {
+                is UIState.OnError -> {
                     snackbarHostState.showSnackbar(
-                        message = msg ?: "",
-                        //   actionLabel = "Action",
-
+                        message = (snackbarMessageState as UIState.OnError).message ?: ""
                     )
                 }
 
-            }
+                is UIState.OnSuccess<*> -> {
+                    snackbarHostState.showSnackbar(
+                        message = (snackbarMessageState as UIState.OnSuccess<*>).data.toString()
+                    )
+                }
 
-            else -> Unit
+                else -> Unit
+            }
         }
 
         return snackbarHostState
     }
+
 }

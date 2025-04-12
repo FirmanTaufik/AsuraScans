@@ -93,6 +93,13 @@ class DetailActivity  : BaseActivity () {
        }
     }
 
+    @Composable
+    override fun OnInitViewCompose() {
+        return LaunchedEffect(key1 = true) {
+            viewModel().showFab(true)
+        }
+    }
+
 
     @Composable
     override fun BaseFloatingActionButton()  {
