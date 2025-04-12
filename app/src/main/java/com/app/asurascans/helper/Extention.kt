@@ -25,6 +25,19 @@ inline fun <reified T : Context> Context.startNewActivity(
 }
 */
 
+fun   Context .shareTextAction(
+    textToShare :String
+) {
+    val sendIntent = Intent().apply {
+        action = Intent.ACTION_SEND
+        putExtra(Intent.EXTRA_TEXT, textToShare)
+        type = "text/plain"
+    }
+    val shareIntent = Intent.createChooser(sendIntent, null)
+    this.startActivity(shareIntent)
+}
+
+
 inline fun <reified T : Context> Context .launchActivity(
     launcher: ManagedActivityResultLauncher<Intent, ActivityResult>,
     extras: Bundle? = null

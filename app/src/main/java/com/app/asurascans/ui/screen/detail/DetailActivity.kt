@@ -3,9 +3,11 @@ package com.app.asurascans.ui.screen.detail
 import android.annotation.SuppressLint
 import android.os.Bundle
 import androidx.activity.viewModels
+import androidx.compose.animation.AnimatedVisibility
 import androidx.compose.foundation.BorderStroke
 import androidx.compose.foundation.Image
 import androidx.compose.foundation.background
+import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
@@ -40,6 +42,9 @@ import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.getValue
+import androidx.compose.runtime.mutableStateOf
+import androidx.compose.runtime.remember
+import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
@@ -56,6 +61,7 @@ import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import coil.compose.AsyncImage
+import com.app.asurascans.BuildConfig
 import com.app.asurascans.R
 import com.app.asurascans.core.BaseActivity
 import com.app.asurascans.core.UIState
@@ -63,6 +69,7 @@ import com.app.asurascans.helper.Constant
 import com.app.asurascans.helper.fromObjectToJson
 import com.app.asurascans.helper.launchActivity
 import com.app.asurascans.helper.rememberCallbackActivityLauncher
+import com.app.asurascans.helper.shareTextAction
 import com.app.asurascans.ui.bottomsheet.Comments
 import com.app.asurascans.ui.item.ChapterDetailItem
 import com.app.asurascans.ui.screen.read.ReadActivity
@@ -87,7 +94,7 @@ class DetailActivity : BaseActivity() {
     @Composable
     override fun BaseBottomsheet() {
 
-        Comments (commentResponse.data){
+        Comments(commentResponse.data) {
             viewModel().setBottomSheetSate(it)
         }
     }
@@ -136,18 +143,20 @@ class DetailActivity : BaseActivity() {
         val state by viewModel().commentState.collectAsStateWithLifecycle()
 
         when (state) {
-            is UIState.OnError ->{
+            is UIState.OnError -> {
                 LaunchedEffect(key1 = true) {
                     viewModel().showLoading(false)
                     viewModel().showSnackbar("tidak bisa load komentar", true)
                 }
 
             }
+
             is UIState.OnLoading -> {
                 LaunchedEffect(key1 = true) {
                     viewModel().showLoading(true)
                 }
             }
+
             is UIState.OnSuccess<*> -> {
                 LaunchedEffect(key1 = true) {
                     viewModel().showLoading(false)
@@ -253,7 +262,9 @@ class DetailActivity : BaseActivity() {
                 ChapterDetailItem(item) {
                     val bundle = Bundle().apply {
                         putString(Constant.CHAPTER_ITEM, item.fromObjectToJson())
+                        putString(Constant.DETAIL_DATA, data.fromObjectToJson())
                     }
+
                     launchActivity<ReadActivity>(launcher, bundle)
                 }
             }
@@ -399,168 +410,192 @@ class DetailActivity : BaseActivity() {
     @OptIn(ExperimentalMaterial3Api::class)
     @Composable
     private fun HiglightComment(data: DetailModelResponse.Data?) {
-        Box(
-            modifier = Modifier
-                .padding(horizontal = 15.dp)
-                .fillMaxWidth()
-                .height(200.dp)
-        ) {
-            Card(
-                modifier = Modifier
-                    .fillMaxWidth()
-                    .wrapContentHeight(),
-                colors = CardDefaults.cardColors(
-                    containerColor = MaterialTheme.colorScheme.surface
-                )
-            ) {
-                Box(
-                    modifier = Modifier
-                        .padding(15.dp)
-                ) {
-                    Column(modifier = Modifier.fillMaxWidth()) {
-                        Row(
-                            verticalAlignment = Alignment.CenterVertically,
-                            modifier = Modifier.fillMaxWidth()
-                        ) {
-                            Box(modifier = Modifier.weight(1f)) {
-                                Button(
-                                    onClick = { /*TODO*/ },
-                                    colors = ButtonDefaults.buttonColors(containerColor = primaryColor)
-                                ) {
-                                    Text(
-                                        text = "Read Now",
-                                        color = ColorBlack,
-                                        fontWeight = FontWeight.Bold,
-                                        fontSize = 18.sp
-                                    )
+        var isExpand by remember { mutableStateOf(false) }
 
+        Box {
+            Box(
+                modifier = Modifier
+                    .padding(horizontal = 15.dp)
+                    .fillMaxWidth()
+                    .wrapContentHeight()
+            ) {
+                Card(
+                    modifier = Modifier
+                        .fillMaxWidth()
+                        .wrapContentHeight(),
+                    colors = CardDefaults.cardColors(
+                        containerColor = MaterialTheme.colorScheme.surface
+                    )
+                ) {
+                    Box(
+                        modifier = Modifier
+                            .padding(15.dp)
+                    ) {
+                        Column(modifier = Modifier.fillMaxWidth()) {
+                            Row(
+                                verticalAlignment = Alignment.CenterVertically,
+                                modifier = Modifier.fillMaxWidth()
+                            ) {
+                                Box(modifier = Modifier.weight(1f)) {
+                                    Button(
+                                        onClick = { /*TODO*/ },
+                                        colors = ButtonDefaults.buttonColors(containerColor = primaryColor)
+                                    ) {
+                                        Text(
+                                            text = "Read Now",
+                                            color = ColorBlack,
+                                            fontWeight = FontWeight.Bold,
+                                            fontSize = 18.sp
+                                        )
+
+                                    }
+                                }
+
+                                IconButton(
+                                    onClick = { /*TODO*/ },
+                                    modifier = Modifier
+                                        .size(50.dp),
+                                    colors = IconButtonDefaults.iconButtonColors(
+                                        contentColor = ColorBlack,
+                                        containerColor = ColorButtonRefreshReadChapter
+                                    )
+                                ) {
+                                    Icon(
+                                        painter = painterResource(id = R.drawable.ic_bookmark),
+                                        contentDescription = null,
+                                        tint = ColorWhite,
+                                        modifier = Modifier.size(30.dp)
+                                    )
+                                }
+
+                                Spacer(modifier = Modifier.width(10.dp))
+
+                                IconButton(
+                                    onClick = {
+                                        val textShare =
+                                            "Ayo Baca Komik ${data?.title} di Aplikasi ${
+                                                resources.getString(R.string.app_name)
+                                            } downoload di https://play.google.com/store/apps/details?id=${BuildConfig.APPLICATION_ID}"
+                                        viewModel().context.shareTextAction(textShare)
+
+                                    },
+                                    modifier = Modifier
+                                        .size(50.dp),
+                                    colors = IconButtonDefaults.iconButtonColors(
+                                        contentColor = ColorBlack,
+                                        containerColor = ColorButtonRefreshReadChapter
+                                    )
+                                ) {
+                                    Icon(
+                                        painter = painterResource(id = R.drawable.ic_share),
+                                        contentDescription = null,
+                                        tint = ColorWhite,
+                                        modifier = Modifier.size(30.dp)
+                                    )
                                 }
                             }
 
-                            IconButton(
-                                onClick = { /*TODO*/ },
-                                modifier = Modifier
-                                    .size(50.dp),
-                                colors = IconButtonDefaults.iconButtonColors(
-                                    contentColor = ColorBlack,
-                                    containerColor = ColorButtonRefreshReadChapter
-                                )
-                            ) {
-                                Icon(
-                                    painter = painterResource(id = R.drawable.ic_bookmark),
-                                    contentDescription = null,
-                                    tint = ColorWhite,
-                                    modifier = Modifier.size(30.dp)
-                                )
-                            }
-
-                            Spacer(modifier = Modifier.width(10.dp))
-
-                            IconButton(
-                                onClick = { /*TODO*/ },
-                                modifier = Modifier
-                                    .size(50.dp),
-                                colors = IconButtonDefaults.iconButtonColors(
-                                    contentColor = ColorBlack,
-                                    containerColor = ColorButtonRefreshReadChapter
-                                )
-                            ) {
-                                Icon(
-                                    painter = painterResource(id = R.drawable.ic_share),
-                                    contentDescription = null,
-                                    tint = ColorWhite,
-                                    modifier = Modifier.size(30.dp)
-                                )
-                            }
-                        }
-
-                        Spacer(modifier = Modifier.height(10.dp))
-                        Row(verticalAlignment = Alignment.CenterVertically) {
-                            Image(
-                                painter = painterResource(id = R.drawable.ic_star),
-                                contentDescription = null
-                            )
-                            Spacer(modifier = Modifier.width(8.dp))
-                            Text(
-                                text = data?.userRating.toString() ?: "0",
-                                fontStyle = FontStyle.Normal,
-                                fontSize = 18.sp,
-                                maxLines = 2,
-                                overflow = TextOverflow.Ellipsis,
-                                color = ColorWhite
-                            )
-                            Spacer(modifier = Modifier.width(3.dp))
-                            Text(
-                                text = "(3 Voted)", fontStyle = FontStyle.Normal,
-                                fontSize = 13.sp,
-                                maxLines = 2, overflow = TextOverflow.Ellipsis, color = ColorWhite
-                            )
-                        }
-
-                        Spacer(modifier = Modifier.height(10.dp))
-
-                        Row(verticalAlignment = Alignment.CenterVertically) {
-                            Text(
-                                text = "Apa pendapatmu tentang\nkomik ini?",
-                                fontSize = 15.sp,
-                                modifier = Modifier.weight(1f),
-                                color = ColorWhite,
-
-                                )
-                            Card(
-                                onClick = {},
-                                shape = CircleShape
-                            ) {
+                            Spacer(modifier = Modifier.height(10.dp))
+                            Row(verticalAlignment = Alignment.CenterVertically) {
                                 Image(
-                                    painter = painterResource(id = R.drawable.ic_bad),
-                                    modifier = Modifier
-                                        .size(50.dp)
-                                        .padding(8.dp), contentDescription = null
+                                    painter = painterResource(id = R.drawable.ic_star),
+                                    contentDescription = null
+                                )
+                                Spacer(modifier = Modifier.width(8.dp))
+                                Text(
+                                    text = data?.userRating.toString() ?: "0",
+                                    fontStyle = FontStyle.Normal,
+                                    fontSize = 18.sp,
+                                    maxLines = 2,
+                                    overflow = TextOverflow.Ellipsis,
+                                    color = ColorWhite
+                                )
+                                Spacer(modifier = Modifier.width(3.dp))
+                                Text(
+                                    text = "(3 Voted)",
+                                    fontStyle = FontStyle.Normal,
+                                    fontSize = 13.sp,
+                                    maxLines = 2,
+                                    overflow = TextOverflow.Ellipsis,
+                                    color = ColorWhite
                                 )
                             }
-                            Spacer(modifier = Modifier.width(10.dp))
-                            Card(
-                                onClick = {},
-                                shape = CircleShape
-                            ) {
-                                Image(
-                                    painter = painterResource(id = R.drawable.ic_normal),
-                                    modifier = Modifier
-                                        .size(50.dp)
-                                        .padding(8.dp), contentDescription = null
-                                )
+
+                            Spacer(modifier = Modifier.height(10.dp))
+
+                            Row(verticalAlignment = Alignment.CenterVertically) {
+                                Text(
+                                    text = "Apa pendapatmu tentang\nkomik ini?",
+                                    fontSize = 15.sp,
+                                    modifier = Modifier.weight(1f),
+                                    color = ColorWhite,
+
+                                    )
+                                Card(
+                                    onClick = {},
+                                    shape = CircleShape
+                                ) {
+                                    Image(
+                                        painter = painterResource(id = R.drawable.ic_bad),
+                                        modifier = Modifier
+                                            .size(50.dp)
+                                            .padding(8.dp), contentDescription = null
+                                    )
+                                }
+                                Spacer(modifier = Modifier.width(10.dp))
+                                Card(
+                                    onClick = {},
+                                    shape = CircleShape
+                                ) {
+                                    Image(
+                                        painter = painterResource(id = R.drawable.ic_normal),
+                                        modifier = Modifier
+                                            .size(50.dp)
+                                            .padding(8.dp), contentDescription = null
+                                    )
+                                }
+                                Spacer(modifier = Modifier.width(10.dp))
+                                Card(
+                                    onClick = {},
+                                    shape = CircleShape
+                                ) {
+                                    Image(
+                                        painter = painterResource(id = R.drawable.ic_amazing),
+                                        modifier = Modifier
+                                            .size(50.dp)
+                                            .padding(8.dp), contentDescription = null
+                                    )
+                                }
                             }
-                            Spacer(modifier = Modifier.width(10.dp))
-                            Card(
-                                onClick = {},
-                                shape = CircleShape
-                            ) {
-                                Image(
-                                    painter = painterResource(id = R.drawable.ic_amazing),
-                                    modifier = Modifier
-                                        .size(50.dp)
-                                        .padding(8.dp), contentDescription = null
-                                )
+
+                            AnimatedVisibility(visible = isExpand) {
+                                Text(text = "Lorem ipsum dolor sit amet, consectetur adipiscing elit. Phasellus aliquam et nunc ac imperdiet. Nunc blandit enim et efficitur tincidunt. Sed ac malesuada sapien. Sed scelerisque, ante vitae accumsan malesuada, nisi leo malesuada ex, non tincidunt arcu dolor ac ligula. Nulla ac vehicula sem, laoreet molestie libero. Fusce elementum et elit at ornare. Nulla eleifend tristique congue. Integer nisl dui, posuere non nisi vitae, scelerisque sodales orci. Quisque feugiat libero augue, eget congue nisi blandit a. Nam pretium tincidunt tellus nec vehicula. Nulla lobortis nibh tortor, nec aliquet felis consectetur id. Nullam sed scelerisque mi, non eleifend nibh. Morbi nec semper ante, in efficitur augue. Vivamus porta nisi vitae tellus convallis faucibus.")
                             }
                         }
                     }
                 }
+
+
             }
-
-
-            Card(
-                colors = CardDefaults.cardColors(containerColor = primaryColor),
-                onClick = {},
-                modifier = Modifier
-                    .align(Alignment.BottomCenter),
-                shape = RoundedCornerShape(10.dp)
-            ) {
-                Text(
-                    text = "Selengkapnya", color = ColorBlack,
-                    fontSize = 13.sp,
-                    modifier = Modifier
-                        .padding(5.dp)
-                )
+            
+            Column(modifier = Modifier
+                .align(Alignment.BottomCenter)) {
+               Spacer(modifier = Modifier.height(150.dp))
+                Card(
+                    colors = CardDefaults.cardColors(containerColor = primaryColor),
+                    onClick = {
+                        isExpand = !isExpand
+                    },
+                    modifier = Modifier,
+                    shape = RoundedCornerShape(10.dp)
+                ) {
+                    Text(
+                        text = "Selengkapnya", color = ColorBlack,
+                        fontSize = 13.sp,
+                        modifier = Modifier
+                            .padding(5.dp)
+                    )
+                }
             }
         }
 

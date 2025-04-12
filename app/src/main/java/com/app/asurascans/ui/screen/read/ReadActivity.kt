@@ -37,11 +37,13 @@ import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.dp
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import coil.compose.AsyncImage
+import com.app.asurascans.BuildConfig
 import com.app.asurascans.R
 import com.app.asurascans.core.BaseActivity
 import com.app.asurascans.core.UIState
 import com.app.asurascans.helper.Constant
 import com.app.asurascans.helper.fromJsonToObject
+import com.app.asurascans.helper.shareTextAction
 import com.app.asurascans.ui.screen.detail.DetailModelResponse
 import com.app.asurascans.ui.theme.ColorButtonRefreshReadChapter
 import com.app.asurascans.ui.theme.ColorGrey
@@ -49,6 +51,8 @@ import com.app.asurascans.ui.theme.ShimmerColor
 
 class ReadActivity : BaseActivity() {
 
+    private  lateinit var data :DetailModelResponse.Chapters
+    private lateinit var detailData : DetailModelResponse.Data
 
     override fun viewModel(): ReadVM {
         val viewModel: ReadVM by viewModels()
@@ -57,9 +61,11 @@ class ReadActivity : BaseActivity() {
 
     @Composable
     override fun OnInitViewCompose() {
-        val data = intent.getStringExtra(Constant.CHAPTER_ITEM)
-            ?.fromJsonToObject<DetailModelResponse.Chapters>()
-        val seriesId = data?.chapterId
+        data = intent.getStringExtra(Constant.CHAPTER_ITEM)
+            ?.fromJsonToObject<DetailModelResponse.Chapters>() ?: DetailModelResponse.Chapters()
+        detailData = intent.getStringExtra(Constant.DETAIL_DATA)
+            ?.fromJsonToObject<DetailModelResponse.Data>() ?: DetailModelResponse.Data()
+        val seriesId = data.chapterId
         return LaunchedEffect(key1 = true) {
             viewModel().getChapter(seriesId)
         }
@@ -107,7 +113,12 @@ class ReadActivity : BaseActivity() {
                     )
                 }
                 Text(text = "Chapter ${data?.chapterNumber}", modifier = Modifier.weight(1f))
-                IconButton(onClick = { /*TODO*/ }) {
+                IconButton(onClick = {
+                    val textShare = "Aku Lagi membaca Komik ${detailData?.title} Chapter ${data?.chapterNumber} di Aplikasi ${
+                        resources.getString(R.string.app_name)
+                    } downoload di https://play.google.com/store/apps/details?id=${BuildConfig.APPLICATION_ID}"
+                    viewModel().context.shareTextAction(textShare)
+                }) {
                     Icon(
                         painter = painterResource(id = R.drawable.ic_share),
                         contentDescription = null
