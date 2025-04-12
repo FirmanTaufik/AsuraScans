@@ -1,5 +1,6 @@
-package com.app.asurascans.ui.screen
+package com.app.asurascans.ui.screen.read
 
+import androidx.activity.viewModels
 import androidx.compose.foundation.Image
 import androidx.compose.foundation.background
 import androidx.compose.foundation.border
@@ -16,6 +17,7 @@ import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.layout.wrapContentHeight
 import androidx.compose.foundation.lazy.LazyColumn
+import androidx.compose.foundation.lazy.itemsIndexed
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material3.Button
 import androidx.compose.material3.ButtonDefaults
@@ -24,6 +26,8 @@ import androidx.compose.material3.Icon
 import androidx.compose.material3.IconButton
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.LaunchedEffect
+import androidx.compose.runtime.getValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
@@ -31,11 +35,14 @@ import androidx.compose.ui.layout.ContentScale
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.dp
-import androidx.navigation.NavHostController
+import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import coil.compose.AsyncImage
 import com.app.asurascans.R
 import com.app.asurascans.core.BaseActivity
-import com.app.asurascans.core.BaseViewModel
+import com.app.asurascans.core.UIState
+import com.app.asurascans.helper.Constant
+import com.app.asurascans.helper.fromJsonToObject
+import com.app.asurascans.ui.screen.detail.DetailModelResponse
 import com.app.asurascans.ui.theme.ColorButtonRefreshReadChapter
 import com.app.asurascans.ui.theme.ColorGrey
 import com.app.asurascans.ui.theme.ShimmerColor
@@ -43,10 +50,49 @@ import com.app.asurascans.ui.theme.ShimmerColor
 class ReadActivity : BaseActivity() {
 
 
+    override fun viewModel(): ReadVM {
+        val viewModel: ReadVM by viewModels()
+        return viewModel
+    }
+
+    @Composable
+    override fun OnInitViewCompose() {
+        val data = intent.getStringExtra(Constant.CHAPTER_ITEM)
+            ?.fromJsonToObject<DetailModelResponse.Chapters>()
+        val seriesId = data?.chapterId
+        return LaunchedEffect(key1 = true) {
+            viewModel().getChapter(seriesId)
+        }
+    }
+
     @Composable
     override fun BaseContent(
         paddingValues: PaddingValues
     ) {
+        val state by viewModel().chapterState.collectAsStateWithLifecycle()
+        when (state) {
+            is UIState.OnError -> {
+
+            }
+
+            UIState.OnIdle -> {
+
+            }
+
+            UIState.OnLoading -> {
+
+            }
+
+            is UIState.OnSuccess<*> -> {
+                val data = (state as UIState.OnSuccess<*>).data as ReadModelResponse
+                SuccessContent(data.data)
+            }
+        }
+
+    }
+
+    @Composable
+    private fun SuccessContent(data: ReadModelResponse.Data?) {
         Column(modifier = Modifier.fillMaxSize()) {
             Row(
                 modifier = Modifier
@@ -60,7 +106,7 @@ class ReadActivity : BaseActivity() {
                         contentDescription = null
                     )
                 }
-                Text(text = "Chapter 200", modifier = Modifier.weight(1f))
+                Text(text = "Chapter ${data?.chapterNumber}", modifier = Modifier.weight(1f))
                 IconButton(onClick = { /*TODO*/ }) {
                     Icon(
                         painter = painterResource(id = R.drawable.ic_share),
@@ -124,33 +170,29 @@ class ReadActivity : BaseActivity() {
                     .weight(1f)
                     .fillMaxWidth()
             ) {
-                item {
-                    AsyncImage(
-                        model = "https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcTIy2iFwrch8iXz2wXTk0GWUVaBT4uZSMtdZQ&s",
-                        contentDescription = null,
-                        modifier = Modifier.fillMaxSize(),
-                        contentScale = ContentScale.Crop
-                    )
-                }
-                item {
-                    AsyncImage(
-                        model = "https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcTIy2iFwrch8iXz2wXTk0GWUVaBT4uZSMtdZQ&s",
-                        contentDescription = null,
-                        modifier = Modifier.fillMaxSize(),
-                        contentScale = ContentScale.Crop
-                    )
+                if (data != null) {
+                    itemsIndexed(data.chapterImages) { index, item ->
+                        AsyncImage(
+                            model = item,
+                            contentDescription = null,
+                            modifier = Modifier.fillMaxSize(),
+                            contentScale = ContentScale.Crop
+                        )
+                    }
                 }
             }
 
-            BottomBar()
+            BottomBar(data)
         }
     }
 
 
     @Composable
-    private fun BottomBar() {
-        Column(modifier = Modifier
-            .fillMaxWidth()) {
+    private fun BottomBar(data: ReadModelResponse.Data?) {
+        Column(
+            modifier = Modifier
+                .fillMaxWidth()
+        ) {
             Row(
                 modifier = Modifier
                     .fillMaxWidth(),
@@ -196,27 +238,53 @@ class ReadActivity : BaseActivity() {
                 horizontalArrangement = Arrangement.SpaceBetween
             ) {
                 IconButton(onClick = { /*TODO*/ }) {
-                    Icon(painter = painterResource(id = R.drawable.ic_list_read_chapter), contentDescription = null)
+                    Icon(
+                        painter = painterResource(id = R.drawable.ic_list_read_chapter),
+                        contentDescription = null
+                    )
                 }
-                
-                Button(onClick = { /*TODO*/ },
+
+                Button(
+                    onClick = {
+                        viewModel().refresh()
+                    },
                     colors = ButtonDefaults.buttonColors(containerColor = ColorButtonRefreshReadChapter),
                     shape = RoundedCornerShape(10.dp),
-                    modifier = Modifier.width(95.dp)
+                    modifier = Modifier
+                        .width(95.dp)
                         .height(35.dp),
                     contentPadding = PaddingValues(0.dp)
                 ) {
                     Text(text = "Refresh", color = ShimmerColor)
                 }
-                
+
                 IconButton(onClick = { /*TODO*/ }) {
-                    Icon(painter = painterResource(id = R.drawable.ic_comment_read_chapter), contentDescription = null)
+                    Icon(
+                        painter = painterResource(id = R.drawable.ic_comment_read_chapter),
+                        contentDescription = null
+                    )
                 }
-                IconButton(onClick = { /*TODO*/ }) {
-                    Icon(painter = painterResource(id = R.drawable.ic_arrow_prev_read_chapter), contentDescription = null)
+                IconButton(onClick = {
+
+                    if (!data?.prevChapterId.isNullOrEmpty()) {
+                        viewModel().getChapter(data?.prevChapterId)
+                    } else viewModel().showSnackbar("tidak ada chapter sebelumnya", true)
+
+                }) {
+                    Icon(
+                        painter = painterResource(id = R.drawable.ic_arrow_prev_read_chapter),
+                        contentDescription = null
+                    )
                 }
-                IconButton(onClick = { /*TODO*/ }) {
-                    Icon(painter = painterResource(id = R.drawable.ic_arrow_next_read_chapter), contentDescription = null)
+                IconButton(onClick = {
+                    if (!data?.nextChapterId.isNullOrEmpty()) {
+                        viewModel().getChapter(data?.nextChapterId)
+                    } else viewModel().showSnackbar("tidak ada chapter selanjutnya", true)
+                }) {
+                    Icon(
+                        painter = painterResource(id = R.drawable.ic_arrow_next_read_chapter),
+                        contentDescription = null
+                    )
                 }
             }
         }

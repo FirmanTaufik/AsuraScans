@@ -1,6 +1,7 @@
 package com.app.asurascans.ui.screen.detail
 
 import android.annotation.SuppressLint
+import android.os.Bundle
 import androidx.activity.viewModels
 import androidx.compose.foundation.BorderStroke
 import androidx.compose.foundation.Image
@@ -35,14 +36,10 @@ import androidx.compose.material3.Icon
 import androidx.compose.material3.IconButton
 import androidx.compose.material3.IconButtonDefaults
 import androidx.compose.material3.MaterialTheme
-import androidx.compose.material3.Scaffold
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.getValue
-import androidx.compose.runtime.mutableStateOf
-import androidx.compose.runtime.remember
-import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
@@ -57,18 +54,18 @@ import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
-import androidx.hilt.navigation.compose.hiltViewModel
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
-import androidx.navigation.NavHostController
 import coil.compose.AsyncImage
 import com.app.asurascans.R
 import com.app.asurascans.core.BaseActivity
-import com.app.asurascans.core.BaseViewModel
 import com.app.asurascans.core.UIState
 import com.app.asurascans.helper.Constant
+import com.app.asurascans.helper.fromObjectToJson
+import com.app.asurascans.helper.launchActivity
+import com.app.asurascans.helper.rememberCallbackActivityLauncher
 import com.app.asurascans.ui.bottomsheet.Comments
 import com.app.asurascans.ui.item.ChapterDetailItem
-import com.app.asurascans.ui.screen.home.HomeVM
+import com.app.asurascans.ui.screen.read.ReadActivity
 import com.app.asurascans.ui.theme.ColorBlack
 import com.app.asurascans.ui.theme.ColorButtonRefreshReadChapter
 import com.app.asurascans.ui.theme.ColorIcon
@@ -77,20 +74,22 @@ import com.app.asurascans.ui.theme.ColorWhite
 import com.app.asurascans.ui.theme.backgroundItemColor
 import com.app.asurascans.ui.theme.primaryColor
 
-class DetailActivity  : BaseActivity () {
+class DetailActivity : BaseActivity() {
 
+    private lateinit var commentResponse: CommentModelResponse
 
     override fun viewModel(): DetailVM {
-        val viewModel :DetailVM by viewModels()
+        val viewModel: DetailVM by viewModels()
         return viewModel
     }
 
 
     @Composable
     override fun BaseBottomsheet() {
-       Comments {
-           viewModel().setBottomSheetSate(it)
-       }
+
+        Comments (commentResponse.data){
+            viewModel().setBottomSheetSate(it)
+        }
     }
 
     @Composable
@@ -102,9 +101,11 @@ class DetailActivity  : BaseActivity () {
 
 
     @Composable
-    override fun BaseFloatingActionButton()  {
-         IconButton(
-            onClick = {  viewModel().setBottomSheetSate(true) },
+    override fun BaseFloatingActionButton() {
+        IconButton(
+            onClick = {
+                viewModel().getComments()
+            },
             modifier = Modifier
                 .size(70.dp),
             colors = IconButtonDefaults.iconButtonColors(
@@ -132,7 +133,33 @@ class DetailActivity  : BaseActivity () {
 
         }
 
+        val state by viewModel().commentState.collectAsStateWithLifecycle()
 
+        when (state) {
+            is UIState.OnError ->{
+                LaunchedEffect(key1 = true) {
+                    viewModel().showLoading(false)
+                    viewModel().showSnackbar("tidak bisa load komentar", true)
+                }
+
+            }
+            is UIState.OnLoading -> {
+                LaunchedEffect(key1 = true) {
+                    viewModel().showLoading(true)
+                }
+            }
+            is UIState.OnSuccess<*> -> {
+                LaunchedEffect(key1 = true) {
+                    viewModel().showLoading(false)
+                    val data = (state as UIState.OnSuccess<*>).data as CommentModelResponse
+                    commentResponse = data
+                    viewModel().setBottomSheetSate(true)
+                }
+
+            }
+
+            UIState.OnIdle -> Unit
+        }
 
         val detailState by viewModel().detailState.collectAsStateWithLifecycle()
 
@@ -166,17 +193,11 @@ class DetailActivity  : BaseActivity () {
 
 
         }
-
-        /*if (showBottomSheet) {
-            Comments {
-                showBottomSheet = it
-            }
-        }*/
     }
 
     @Composable
     private fun SuccessContent(data: DetailModelResponse.Data?) {
-
+        val launcher = rememberCallbackActivityLauncher()
         AsyncImage(
             model = data?.coverImageUrl,
             contentDescription = null,
@@ -228,8 +249,13 @@ class DetailActivity  : BaseActivity () {
                 ListChapterArea()
                 Spacer(modifier = Modifier.height(15.dp))
             }
-            itemsIndexed(data?.chapters?.toList() ?: listOf())  { index, item ->
-                ChapterDetailItem(item)
+            itemsIndexed(data?.chapters?.toList() ?: listOf()) { index, item ->
+                ChapterDetailItem(item) {
+                    val bundle = Bundle().apply {
+                        putString(Constant.CHAPTER_ITEM, item.fromObjectToJson())
+                    }
+                    launchActivity<ReadActivity>(launcher, bundle)
+                }
             }
         }
 
@@ -302,7 +328,11 @@ class DetailActivity  : BaseActivity () {
                             contentDescription = null,
                             tint = primaryColor
                         )
-                        Text(text = data?.bookmarkCount.toString(), color = Color.White, fontSize = 15.sp)
+                        Text(
+                            text = data?.bookmarkCount.toString(),
+                            color = Color.White,
+                            fontSize = 15.sp
+                        )
                     }
                 }
 
@@ -452,9 +482,12 @@ class DetailActivity  : BaseActivity () {
                             )
                             Spacer(modifier = Modifier.width(8.dp))
                             Text(
-                                text = data?.userRating.toString() ?: "0", fontStyle = FontStyle.Normal,
+                                text = data?.userRating.toString() ?: "0",
+                                fontStyle = FontStyle.Normal,
                                 fontSize = 18.sp,
-                                maxLines = 2, overflow = TextOverflow.Ellipsis, color = ColorWhite
+                                maxLines = 2,
+                                overflow = TextOverflow.Ellipsis,
+                                color = ColorWhite
                             )
                             Spacer(modifier = Modifier.width(3.dp))
                             Text(
@@ -548,14 +581,18 @@ class DetailActivity  : BaseActivity () {
                     .align(alignment = Alignment.Center),
                 contentPadding = PaddingValues(5.dp)
             ) {
-                itemsIndexed(genres?.toList() ?:  listOf()) { index, item ->
+                itemsIndexed(genres?.toList() ?: listOf()) { index, item ->
                     Box(modifier = Modifier.padding(horizontal = 5.dp)) {
                         Button(
                             onClick = { /*TODO*/ },
                             shape = RoundedCornerShape(10.dp),
                             colors = ButtonDefaults.buttonColors(containerColor = backgroundItemColor)
                         ) {
-                            Text(text = item.name?: "", color = ColorWhite, textAlign = TextAlign.Center)
+                            Text(
+                                text = item.name ?: "",
+                                color = ColorWhite,
+                                textAlign = TextAlign.Center
+                            )
                         }
                     }
                 }

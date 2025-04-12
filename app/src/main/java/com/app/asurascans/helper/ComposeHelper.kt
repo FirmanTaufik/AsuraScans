@@ -1,6 +1,12 @@
 package com.app.asurascans.helper
 
+import android.content.Context
+import android.content.Intent
+import android.os.Bundle
+import androidx.activity.compose.BackHandler
+import androidx.activity.compose.ManagedActivityResultLauncher
 import androidx.activity.compose.rememberLauncherForActivityResult
+import androidx.activity.result.ActivityResult
 import androidx.activity.result.contract.ActivityResultContracts
 import androidx.compose.animation.core.animateFloatAsState
 import androidx.compose.animation.core.tween
@@ -10,6 +16,7 @@ import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.fillMaxHeight
+import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.offset
 import androidx.compose.foundation.layout.padding
@@ -37,7 +44,48 @@ import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.Dp
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
+import androidx.compose.ui.window.Dialog
 import com.app.asurascans.ui.theme.primaryColor
+
+
+@Composable
+fun TransparentDialog(
+    isCancelable : Boolean ?=false,
+    onDismissRequest: () -> Unit,
+    content: @Composable () -> Unit
+) {
+    Dialog(
+        onDismissRequest = if (isCancelable == true) onDismissRequest else ({})
+    ) {
+        // This makes the background transparent
+        if (isCancelable==true) {
+            BackHandler(enabled = true) {
+                // do nothing on back press
+            }
+        }
+
+        Box(
+            modifier = Modifier
+                .fillMaxSize()
+                .background(Color.Transparent),
+            contentAlignment = Alignment.Center
+        ) {
+            content()
+        }
+    }
+}
+
+
+@Composable
+fun rememberCallbackActivityLauncher(
+    onResult: (ActivityResult) -> Unit ={},
+): ManagedActivityResultLauncher<Intent, ActivityResult> {
+    val launcher = rememberLauncherForActivityResult(ActivityResultContracts.StartActivityForResult()) { result ->
+        onResult(result)
+    }
+    return launcher
+}
+
 
 @Composable
 fun getDeviceWidthInDp(): Int {

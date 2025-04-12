@@ -3,6 +3,7 @@ package com.app.asurascans.ui.screen.home
 import android.content.Intent
 import android.os.Bundle
 import android.util.Log
+import androidx.activity.compose.rememberLauncherForActivityResult
 import androidx.compose.foundation.Image
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Arrangement
@@ -62,7 +63,8 @@ import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.mutableIntStateOf
 import androidx.compose.runtime.rememberCoroutineScope
 import com.app.asurascans.helper.Constant
-import com.app.asurascans.helper.startNewActivity
+import com.app.asurascans.helper.launchActivity
+import com.app.asurascans.helper.rememberCallbackActivityLauncher
 import com.app.asurascans.ui.screen.detail.DetailActivity
 
 
@@ -211,6 +213,9 @@ fun NewLatestadded() {
 fun LatestUpdateItemsGrid(data: UpdateModelResponse, homeVm: HomeVM) {
     val scrollStateLatestUpdate = rememberLazyListState()
     val list = homeVm.itemsSelected.collectAsStateWithLifecycle()
+
+    val launcher= rememberCallbackActivityLauncher( )
+
     FlowRow(
         maxItemsInEachRow = 3,
         modifier = Modifier
@@ -222,7 +227,7 @@ fun LatestUpdateItemsGrid(data: UpdateModelResponse, homeVm: HomeVM) {
             LastUpdateGridItem(data = it) { seriesId ->
                 val bundle = Bundle()
                 bundle.putString(Constant.SERIES_ID, seriesId)
-                homeVm.context.startNewActivity<DetailActivity>(bundle)
+                 homeVm.context.launchActivity <DetailActivity>(launcher, bundle)
             }
         }
     }

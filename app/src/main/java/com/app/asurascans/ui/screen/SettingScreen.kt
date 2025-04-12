@@ -49,7 +49,7 @@ import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import com.app.asurascans.R
-import com.app.asurascans.helper.startNewActivity
+import com.app.asurascans.helper.rememberCallbackActivityLauncher
 import com.app.asurascans.ui.item.StarRatingBar
 import com.app.asurascans.ui.theme.ColorBlack
 import com.app.asurascans.ui.theme.ColorGrey
@@ -108,12 +108,14 @@ fun ButtonBottom() {
     }
     Spacer(modifier = Modifier.height(20.dp))
 
-    Row (modifier = Modifier.fillMaxWidth()
+    Row (modifier = Modifier
+        .fillMaxWidth()
         .height(60.dp)){
         Button(onClick = { /*TODO*/ },
             shape = RoundedCornerShape(15.dp),
             colors = ButtonDefaults.buttonColors(containerColor = ColorGrey, contentColor = ColorBlack),
-            modifier = Modifier.fillMaxHeight()
+            modifier = Modifier
+                .fillMaxHeight()
                 .width(150.dp)
         ) {
             Text(text = "Terms Of Service")
@@ -122,7 +124,8 @@ fun ButtonBottom() {
         Button(onClick = { /*TODO*/ },
             shape = RoundedCornerShape(15.dp),
             colors = ButtonDefaults.buttonColors(containerColor = primaryColor, contentColor = ColorBlack),
-            modifier = Modifier.fillMaxHeight()
+            modifier = Modifier
+                .fillMaxHeight()
                 .weight(1f)
         ) {
             Text(text = "Logout", fontWeight = FontWeight.Bold)
@@ -327,6 +330,7 @@ private fun SettingArea() {
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
 private fun HeaderProfile() {
+    val launcher = rememberCallbackActivityLauncher()
     val context = LocalContext.current
     Box(
         modifier = Modifier
@@ -381,7 +385,7 @@ private fun HeaderProfile() {
                 Box(modifier = Modifier.padding(top = 0.dp)) {
                     Card(shape = RoundedCornerShape(5.dp),
                         onClick = {
-                            context.startNewActivity<ProfileActivity>()
+
                         }) {
                         Image(
                             painter = painterResource(id = R.drawable.ic_logout),

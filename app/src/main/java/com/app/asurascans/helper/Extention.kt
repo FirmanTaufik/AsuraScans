@@ -4,10 +4,13 @@ import android.app.Activity
 import android.content.Context
 import android.content.Intent
 import android.os.Bundle
+import androidx.activity.compose.ManagedActivityResultLauncher
+import androidx.activity.result.ActivityResult
 import com.google.gson.Gson
 import com.google.gson.reflect.TypeToken
 
-inline fun <reified T : Activity> Activity.startNewActivity(
+/*
+inline fun <reified T : Context> Context.startNewActivity(
     extras: Bundle? = null,
     flags: Int? = Intent.FLAG_ACTIVITY_REORDER_TO_FRONT,
     requestCode :Int? = 100
@@ -19,6 +22,16 @@ inline fun <reified T : Activity> Activity.startNewActivity(
     if (requestCode != null) {
         startActivityForResult(intent, requestCode)
     }
+}
+*/
+
+inline fun <reified T : Context> Context .launchActivity(
+    launcher: ManagedActivityResultLauncher<Intent, ActivityResult>,
+    extras: Bundle? = null
+) {
+    val intent = Intent(this, T::class.java)
+    extras?.let { intent.putExtras(it) }
+    launcher.launch(intent)
 }
 
 fun <T> T.fromObjectToJson(): String = try {

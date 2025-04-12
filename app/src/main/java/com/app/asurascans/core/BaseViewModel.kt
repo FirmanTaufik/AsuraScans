@@ -19,10 +19,19 @@ import kotlin.properties.ReadWriteProperty
 import kotlin.reflect.KProperty
 
  abstract class BaseViewModel : ViewModel() {
-    val TAG = "FirmanTAG"
+     val TAG = "FirmanTAG"
 
     @Inject
     protected lateinit var apiService: ApiService
+
+
+     var showLoading = mutableStateOf(false)
+     private set
+
+     fun showLoading(valueBoolean: Boolean){
+         showLoading.value= valueBoolean
+     }
+
 
 
      var showFab = mutableStateOf(false)

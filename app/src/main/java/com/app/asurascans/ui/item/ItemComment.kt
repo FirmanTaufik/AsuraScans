@@ -28,12 +28,13 @@ import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import coil.compose.AsyncImage
 import com.app.asurascans.R
+import com.app.asurascans.ui.screen.detail.CommentModelResponse
 import com.app.asurascans.ui.theme.ColorRed
 import com.app.asurascans.ui.theme.ColorWhite
 import com.app.asurascans.ui.theme.primaryColor
 
 @Composable
-fun ItemComment(modifier: Modifier = Modifier) {
+fun ItemComment(data : CommentModelResponse.Data, modifier: Modifier = Modifier) {
     Box(
         modifier = modifier
             .fillMaxWidth()
@@ -41,7 +42,7 @@ fun ItemComment(modifier: Modifier = Modifier) {
     ) {
         Row(modifier = Modifier.fillMaxWidth()) {
             AsyncImage(
-                model = "https://images.genius.com/e86a0fabc1709ea8d56e994584ced53d.1000x1000x1.png",
+                model = data.commentUser?.userImage,
                 contentDescription = null,
                 modifier = Modifier
                     .clip(CircleShape)
@@ -62,9 +63,9 @@ fun ItemComment(modifier: Modifier = Modifier) {
                                 modifier = Modifier.size(15.dp)
                             )
                             Spacer(modifier = Modifier.width(5.dp))
-                            Text(text = "@blazing_guy •", fontWeight = FontWeight.Bold, fontSize = 15.sp)
+                            Text(text = "@${data.commentUser?.userName} •", fontWeight = FontWeight.Bold, fontSize = 15.sp)
                             Spacer(modifier = Modifier.width(5.dp))
-                            Text(text = "21 Jam yang lalu", fontSize = 15.sp)
+                            Text(text = data.createdAt ?: "", fontSize = 15.sp)
                         }
                         Spacer(modifier = Modifier.height(5.dp))
                         Row(
@@ -72,7 +73,7 @@ fun ItemComment(modifier: Modifier = Modifier) {
                             verticalAlignment = Alignment.CenterVertically
                         ) {
                             Text(
-                                text = "Emperor",
+                                text = data.commentUser?.userBadge ?: "",
                                 modifier = Modifier
                                     .border(
                                         width = 1.dp,
@@ -86,7 +87,7 @@ fun ItemComment(modifier: Modifier = Modifier) {
 
 
                             Text(
-                                text = "Lv. 869",
+                                text = data.commentUser?.userLv.toString() ?: "",
                                 modifier = Modifier
                                     .border(
                                         width = 1.dp,
@@ -97,19 +98,20 @@ fun ItemComment(modifier: Modifier = Modifier) {
                                 fontSize = 13.sp, color = ColorRed
                             )
                             Spacer(modifier = Modifier.width(5.dp))
-
-                            Text(
-                                text = "Donatur",
-                                modifier = Modifier
-                                    .border(
-                                        width = 1.dp,
-                                        color = primaryColor,
-                                        shape = RoundedCornerShape(5.dp)
-                                    )
-                                    .padding(vertical = 1.dp, horizontal = 5.dp),
-                                fontSize = 13.sp,
-                                color = primaryColor
-                            )
+                            if (data.commentUser?.userPremium == true) {
+                                Text(
+                                    text = "Donatur",
+                                    modifier = Modifier
+                                        .border(
+                                            width = 1.dp,
+                                            color = primaryColor,
+                                            shape = RoundedCornerShape(5.dp)
+                                        )
+                                        .padding(vertical = 1.dp, horizontal = 5.dp),
+                                    fontSize = 13.sp,
+                                    color = primaryColor
+                                )
+                            }
                         }
 
                     }
@@ -123,7 +125,7 @@ fun ItemComment(modifier: Modifier = Modifier) {
 
                 Spacer(modifier = Modifier.height(5.dp))
                 Text(
-                    text = "Jika anda membaca komentar ini artinya anda jomblo atau anda butuh cindo",
+                    text = data.content ?: "",
                     fontSize = 15.sp,
                     lineHeight = 15.sp
                 )
@@ -143,9 +145,9 @@ fun ItemComment(modifier: Modifier = Modifier) {
                         )
                     }
                     Spacer(modifier = Modifier.width(5.dp))
-                    Text(text = "29", fontSize = 13.sp)
+                    Text(text = data.like.toString(), fontSize = 13.sp)
                     Spacer(modifier = Modifier.width(10.dp))
-                    Text(text = "Balas", fontSize = 13.sp)
+                    Text(text = "Balas  • ${data.replies.toString()}", fontSize = 13.sp)
                 }
 
             }

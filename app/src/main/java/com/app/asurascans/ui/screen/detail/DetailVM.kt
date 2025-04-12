@@ -21,7 +21,12 @@ class DetailVM @Inject constructor(@ApplicationContext val context: Context) : B
     var detailState by stateDataDelegate<UIState>(UIState.OnIdle)
         private set
 
+    var commentState by stateDataDelegate<UIState>(UIState.OnIdle)
+        private set
+
+    private var seriesId = ""
     fun getDetail(seriesId: String?) = viewModelScope .launch {
+        this@DetailVM.seriesId =  seriesId ?: ""
         detailState = UIState.OnLoading.asNewState()
             try {
                 val result = apiService.getDetail(seriesId ?: "")
@@ -32,6 +37,14 @@ class DetailVM @Inject constructor(@ApplicationContext val context: Context) : B
         }
 
 
-
+    fun getComments( ) = viewModelScope .launch {
+        commentState = UIState.OnLoading.asNewState()
+        try {
+            val result = apiService.getComment("5ae953db-3dc0-41d4-988d-0c0550df7307" )
+            commentState =   result.asNewResponseApiState()
+        } catch (e: Exception) {
+            commentState =   UIState.OnError(e.message).asNewState()
+        }
+    }
 
 }

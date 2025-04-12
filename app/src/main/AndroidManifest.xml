@@ -23,7 +23,7 @@
             android:exported="false"
             android:theme="@style/Theme.AsuraScans" />
         <activity
-            android:name=".ui.screen.ReadActivity"
+            android:name=".ui.screen.read.ReadActivity"
             android:exported="false"
             android:theme="@style/Theme.AsuraScans" />
      <activity
