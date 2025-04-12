@@ -2,6 +2,8 @@ package com.app.asurascans.ui.item
 
 import androidx.compose.foundation.Image
 import androidx.compose.foundation.background
+import androidx.compose.foundation.border
+import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
@@ -9,12 +11,14 @@ import androidx.compose.foundation.layout.IntrinsicSize
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxHeight
+import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.layout.widthIn
+import androidx.compose.foundation.layout.wrapContentHeight
 import androidx.compose.foundation.layout.wrapContentSize
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material3.Icon
@@ -34,14 +38,22 @@ import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import coil.compose.AsyncImage
 import com.app.asurascans.R
+import com.app.asurascans.helper.getDeviceWidthInDp
+import com.app.asurascans.ui.screen.home.UpdateModelResponse
+import com.app.asurascans.ui.theme.ColorBlack
 import com.app.asurascans.ui.theme.ColorTransparent
 
 @Composable
-fun LastUpdateGridItem(modifier: Modifier = Modifier) {
+fun LastUpdateGridItem(modifier: Modifier = Modifier, showChapter : Boolean ?= true,
+                       data : UpdateModelResponse.List ?= UpdateModelResponse. List(), onClick :(String) ->Unit ?={} ) {
     Column(
         modifier = Modifier
-            .wrapContentSize()
-            .padding(horizontal = 5.dp),
+            .width((getDeviceWidthInDp() / 3.1).dp)
+            .clickable {
+                onClick.invoke(data?.seriesId ?: "")
+            }
+            .wrapContentHeight()
+            .padding(horizontal = 5.dp,),
         horizontalAlignment = Alignment.CenterHorizontally
     ) {
         Box(
@@ -49,32 +61,35 @@ fun LastUpdateGridItem(modifier: Modifier = Modifier) {
                 .wrapContentSize()
         ) {
             AsyncImage(
-                model = "https://upload.wikimedia.org/wikipedia/id/thumb/d/db/Boruto_manga_vol_1.jpg/220px-Boruto_manga_vol_1.jpg",
+                model = data?.coverImageUrl ?: "" ,
                 contentDescription = null,
                 modifier = Modifier
                     .clip(RoundedCornerShape(6.dp))
-                    .width(110.dp)
+                    .fillMaxWidth()
                     .height(150.dp),
                 contentScale = ContentScale.Crop,
             )
 
-            Box(
-                modifier = modifier
-                    .align(Alignment.BottomCenter)
-                    .width(110.dp)
-                    .height(150.dp)
-                    .background(
-                        brush = Brush.verticalGradient(
-                            colors = listOf(ColorTransparent, Color.Black)
+            if (showChapter == true) {
+
+                Box(
+                    modifier = modifier
+                        .align(Alignment.BottomCenter)
+                        .fillMaxWidth()
+                        .height(150.dp)
+                        .background(
+                            brush = Brush.verticalGradient(
+                                colors = listOf(ColorTransparent, Color.Black)
+                            ),
+                            shape = RoundedCornerShape(bottomEnd = 6.dp, bottomStart = 6.dp)
                         ),
-                        shape = RoundedCornerShape(bottomEnd = 6.dp, bottomStart = 6.dp)
-                    ),
-            )
+                )
+            }
 
             Row(
                 modifier = Modifier
-                    .width(110.dp)
-                    .padding(horizontal = 5.dp),
+                    .fillMaxWidth()
+                    .padding(end = 5.dp, start = 5.dp, top = 5.dp),
                 horizontalArrangement = Arrangement.SpaceBetween,
                 verticalAlignment = Alignment.CenterVertically
             ) {
@@ -92,94 +107,104 @@ fun LastUpdateGridItem(modifier: Modifier = Modifier) {
                         Image(
                             painter = painterResource(id = R.drawable.ic_star),
                             contentDescription = null,
-                            modifier = Modifier.size(10.dp)
+                            modifier = Modifier.size(13.dp)
                         )
                         Spacer(modifier = Modifier.width(3.dp))
                         Text(
-                            text = "7.5", color = Color.White, fontWeight = FontWeight.Bold,
-                            fontSize = 10.sp
+                            text = data?.userRating.toString(), color = Color.White, fontWeight = FontWeight.Bold,
+                            fontSize = 15.sp
                         )
                     }
                 }
 
                 Image(
                     painter = painterResource(id = R.drawable.ic_korea), contentDescription = null,
-                    modifier = Modifier.size(20.dp)
+                    modifier = Modifier.size(25.dp)
+                        .border(width = 1.dp, color = ColorBlack, RoundedCornerShape(1.dp)),
+                    contentScale = ContentScale.Crop
                 )
             }
 
-            Column(
-                modifier = Modifier
-                    .wrapContentSize()
-                    .background(
-                        brush = Brush.verticalGradient(
-                            colors = listOf(ColorTransparent, Color.Black)
-                        ),
-                        shape = RoundedCornerShape(bottomEnd = 6.dp, bottomStart = 6.dp)
-                    )
-                    .align(Alignment.BottomCenter)
-            ) {
-
-                Row(
+            if (showChapter == true) {
+                Column(
                     modifier = Modifier
-                        .width(110.dp)
-                        .padding(horizontal = 5.dp),
-                    horizontalArrangement = Arrangement.SpaceBetween,
-                    verticalAlignment = Alignment.CenterVertically
+                        .fillMaxSize()
+                        .background(
+                            brush = Brush.verticalGradient(
+                                colors = listOf(ColorTransparent, Color.Black)
+                            ),
+                            shape = RoundedCornerShape(bottomEnd = 6.dp, bottomStart = 6.dp)
+                        )
+                        .align(Alignment.BottomCenter)
                 ) {
-                    Box(
+
+                    Row(
                         modifier = Modifier
-                            .wrapContentSize()
-                            .background(color = ColorTransparent, shape = RoundedCornerShape(4.dp))
+                            .padding(5.dp)
+                            .fillMaxWidth(),
+                        horizontalArrangement = Arrangement.SpaceBetween,
+                        verticalAlignment = Alignment.CenterVertically
                     ) {
+                        Box(
+                            modifier = Modifier
+                                .wrapContentSize()
+                                .background(color = ColorTransparent, shape = RoundedCornerShape(4.dp))
+                        ) {
+                            Text(
+                                text = "CH 69", color = Color.White,
+                                fontSize = 13.sp, maxLines = 1,
+                                overflow = TextOverflow.Ellipsis
+                            )
+                        }
+
                         Text(
-                            text = "CH 6009", color = Color.White, fontWeight = FontWeight.Bold,
-                            fontSize = 10.sp
+                            text = "1 menit", color = Color.White,
+                            fontSize = 13.sp
                         )
                     }
 
-                    Text(
-                        text = "1 menit", color = Color.White, fontWeight = FontWeight.Bold,
-                        fontSize = 10.sp
-                    )
-                }
+                    //Spacer(modifier = Modifier.height(5.dp))
 
-                Spacer(modifier = Modifier.height(5.dp))
-
-                Row(
-                    modifier = Modifier
-                        .width(110.dp)
-                        .padding(horizontal = 5.dp),
-                    horizontalArrangement = Arrangement.SpaceBetween,
-                    verticalAlignment = Alignment.CenterVertically
-                ) {
-                    Box(
+                    Row(
                         modifier = Modifier
-                            .wrapContentSize()
-                            .background(color = ColorTransparent, shape = RoundedCornerShape(4.dp))
+                            .fillMaxWidth()
+                            .padding(horizontal = 5.dp),
+                        horizontalArrangement = Arrangement.SpaceBetween,
+                        verticalAlignment = Alignment.CenterVertically
                     ) {
+                        Box(
+                            modifier = Modifier
+                                .wrapContentSize()
+                                .background(color = ColorTransparent, shape = RoundedCornerShape(4.dp))
+                        ) {
+                            Text(
+                                text = "CH 609", color = Color.White,
+                                fontSize = 13.sp, maxLines = 1,
+                                overflow = TextOverflow.Ellipsis
+                            )
+                        }
+
                         Text(
-                            text = "CH 6009", color = Color.White, fontWeight = FontWeight.Bold,
-                            fontSize = 10.sp
+                            text = "1 menit", color = Color.White,
+                            fontSize = 15.sp
                         )
                     }
-
-                    Text(
-                        text = "1 menit", color = Color.White, fontWeight = FontWeight.Bold,
-                        fontSize = 10.sp
-                    )
+                    Spacer(modifier = Modifier.height(5.dp))
                 }
-                Spacer(modifier = Modifier.height(5.dp))
             }
+
         }
+
+
         Spacer(modifier = Modifier.height(3.dp))
         Text(
-            text = "Solo Leveling", color = Color.White, fontWeight = FontWeight.Bold,
-            fontSize = 10.sp,
+            text = data?.title ?: "", color = Color.White, fontWeight = FontWeight.Bold,
+            fontSize = 15.sp,
             textAlign = TextAlign.Center,
             maxLines = 1,
             overflow = TextOverflow.Ellipsis,
             modifier = Modifier.fillMaxWidth()
         )
+        Spacer(modifier = Modifier.height(15.dp))
     }
 }

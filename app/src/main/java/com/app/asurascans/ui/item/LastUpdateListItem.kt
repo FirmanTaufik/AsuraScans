@@ -27,24 +27,23 @@ import androidx.compose.ui.layout.ContentScale
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.style.TextOverflow
-import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import coil.compose.AsyncImage
-import com.app.asurascans.Greeting
 import com.app.asurascans.R
-import com.app.asurascans.ui.theme.AsuraScansTheme
+import com.app.asurascans.ui.screen.home.HomeVM
+import com.app.asurascans.ui.screen.home.UpdateModelResponse
 import com.app.asurascans.ui.theme.ColorGrey
 import com.app.asurascans.ui.theme.ColorRed
 import com.app.asurascans.ui.theme.ColorTransparent
 import com.app.asurascans.ui.theme.ColorTransparentChip
 
 @Composable
-fun LastUpdateListItem(modifier: Modifier = Modifier) {
+fun LastUpdateListItem(modifier: UpdateModelResponse  , homeVm: HomeVM) {
     Box(
         modifier = Modifier
             .wrapContentSize()
-            .padding(10.dp)
+            .padding(vertical = 10.dp, horizontal = 13.dp)
     ) {
         Box(
             modifier = Modifier
@@ -149,25 +148,28 @@ fun LastUpdateListItem(modifier: Modifier = Modifier) {
                     horizontalAlignment = Alignment.CenterHorizontally) {
                     item {
                         Column {
-                            Box(
-                                modifier = Modifier
-                                    .wrapContentSize()
-                                    .background(
-                                        color = Color.Black,
-                                        shape = RoundedCornerShape(8.dp)
+                            repeat(2) {
+                                Box(
+                                    modifier = Modifier
+                                        .padding(vertical = 3.dp)
+                                        .wrapContentSize()
+                                        .background(
+                                            color = Color.Black,
+                                            shape = RoundedCornerShape(8.dp)
+                                        )
+                                ) {
+                                    Text(
+                                        text = "CH 1002", modifier = Modifier
+                                            .padding(vertical = 8.dp, horizontal = 15.dp),
+                                        fontSize = 18.sp, color = Color.White, fontWeight = FontWeight.Bold
                                     )
-                            ) {
+                                }
                                 Text(
-                                    text = "CH 1002", modifier = Modifier
-                                        .padding(vertical = 8.dp, horizontal = 15.dp),
-                                    fontSize = 18.sp, color = Color.White, fontWeight = FontWeight.Bold
+                                    text = "1 jam yang lalu",
+                                    modifier = Modifier.wrapContentSize(),
+                                    color = ColorGrey, fontSize = 13.sp,fontWeight = FontWeight.Bold
                                 )
                             }
-                            Text(
-                                text = "1 jam yang lalu",
-                                modifier = Modifier.wrapContentSize(),
-                                color = ColorGrey, fontSize = 13.sp,fontWeight = FontWeight.Bold
-                            )
                         }
                     }
                 }

@@ -2,7 +2,9 @@
 <manifest xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:tools="http://schemas.android.com/tools">
     <uses-permission android:name="android.permission.INTERNET"/>
+    <uses-permission android:name="android.permission.POST_NOTIFICATIONS"/>
     <application
+        android:name=".core.Application"
         android:allowBackup="true"
         android:dataExtractionRules="@xml/data_extraction_rules"
         android:fullBackupContent="@xml/backup_rules"
@@ -13,12 +15,23 @@
         android:theme="@style/Theme.AsuraScans"
         tools:targetApi="31">
         <activity
-            android:name=".ui.screen.ReadActivity"
+            android:name=".ui.screen.ProfileActivity"
+            android:exported="false"
+            android:theme="@style/Theme.AsuraScans" />
+        <activity
+            android:name=".ui.screen.SearchActivity"
+            android:exported="false"
+            android:theme="@style/Theme.AsuraScans" />
+        <activity
+            android:name=".ui.screen.read.ReadActivity"
             android:exported="false"
             android:theme="@style/Theme.AsuraScans" />
      <activity
-            android:name=".ui.screen.DetailActivity"
+            android:name=".ui.screen.detail.DetailActivity"
             android:exported="false"
+         android:configChanges="keyboardHidden|orientation|screenSize"
+
+         android:windowSoftInputMode="adjustResize"
             android:theme="@style/Theme.AsuraScans" />
         <activity
             android:name=".MainActivity"

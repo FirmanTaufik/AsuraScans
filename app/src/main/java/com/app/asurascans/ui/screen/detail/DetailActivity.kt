@@ -1,6 +1,8 @@
-package com.app.asurascans.ui.screen
+package com.app.asurascans.ui.screen.detail
 
 import android.annotation.SuppressLint
+import android.os.Bundle
+import androidx.activity.viewModels
 import androidx.compose.foundation.BorderStroke
 import androidx.compose.foundation.Image
 import androidx.compose.foundation.background
@@ -10,10 +12,10 @@ import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.PaddingValues
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.Spacer
-import androidx.compose.foundation.layout.fillMaxHeight
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
+import androidx.compose.foundation.layout.imePadding
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.layout.width
@@ -21,27 +23,27 @@ import androidx.compose.foundation.layout.wrapContentHeight
 import androidx.compose.foundation.layout.wrapContentSize
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.LazyRow
-import androidx.compose.foundation.rememberScrollState
+import androidx.compose.foundation.lazy.itemsIndexed
 import androidx.compose.foundation.shape.CircleShape
 import androidx.compose.foundation.shape.RoundedCornerShape
-import androidx.compose.foundation.verticalScroll
 import androidx.compose.material3.Button
-import androidx.compose.material3.ButtonColors
 import androidx.compose.material3.ButtonDefaults
 import androidx.compose.material3.Card
 import androidx.compose.material3.CardDefaults
-import androidx.compose.material3.Divider
+import androidx.compose.material3.CircularProgressIndicator
 import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.Icon
 import androidx.compose.material3.IconButton
 import androidx.compose.material3.IconButtonDefaults
 import androidx.compose.material3.MaterialTheme
-import androidx.compose.material3.Scaffold
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.LaunchedEffect
+import androidx.compose.runtime.getValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
+import androidx.compose.ui.geometry.Offset
 import androidx.compose.ui.graphics.Brush
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.layout.ContentScale
@@ -52,13 +54,20 @@ import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
+import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import coil.compose.AsyncImage
 import com.app.asurascans.R
 import com.app.asurascans.core.BaseActivity
+import com.app.asurascans.core.UIState
+import com.app.asurascans.helper.Constant
+import com.app.asurascans.helper.fromObjectToJson
+import com.app.asurascans.helper.launchActivity
+import com.app.asurascans.helper.rememberCallbackActivityLauncher
+import com.app.asurascans.ui.bottomsheet.Comments
 import com.app.asurascans.ui.item.ChapterDetailItem
+import com.app.asurascans.ui.screen.read.ReadActivity
 import com.app.asurascans.ui.theme.ColorBlack
 import com.app.asurascans.ui.theme.ColorButtonRefreshReadChapter
-import com.app.asurascans.ui.theme.ColorGrey
 import com.app.asurascans.ui.theme.ColorIcon
 import com.app.asurascans.ui.theme.ColorTransparent
 import com.app.asurascans.ui.theme.ColorWhite
@@ -67,94 +76,198 @@ import com.app.asurascans.ui.theme.primaryColor
 
 class DetailActivity : BaseActivity() {
 
-    @SuppressLint("UnusedMaterial3ScaffoldPaddingParameter")
-    @OptIn(ExperimentalMaterial3Api::class)
+    private lateinit var commentResponse: CommentModelResponse
+
+    override fun viewModel(): DetailVM {
+        val viewModel: DetailVM by viewModels()
+        return viewModel
+    }
+
+
     @Composable
-    override fun ScreenContent() {
-        val state = rememberScrollState()
-        Scaffold(floatingActionButton = {
-            IconButton(
-                onClick = { /*TODO*/ },
-                modifier = Modifier
-                    .size(70.dp),
-                colors = IconButtonDefaults.iconButtonColors(
-                    contentColor = ColorBlack,
-                    containerColor = primaryColor
-                )
-            ) {
-                Icon(
-                    painter = painterResource(id = R.drawable.ic_comment),
-                    contentDescription = null,
-                    tint = ColorBlack,
-                    modifier = Modifier.size(50.dp)
-                )
-            }
-        }) {
-            Box(modifier = Modifier) {
-                AsyncImage(
-                    model = "https://imgsrv.crunchyroll.com/cdn-cgi/image/fit=contain,format=auto,quality=85,width=480,height=720/catalog/crunchyroll/323c82257b2f6567fabbb7bd55bfa753.jpg",
-                    contentDescription = null,
-                    contentScale = ContentScale.Crop,
-                    modifier = Modifier.fillMaxSize()
-                )
+    override fun BaseBottomsheet() {
 
-                Column {
-                    Box(
-                        modifier = Modifier
-                            .fillMaxWidth()
-                            .height(400.dp)
-                            .background(
-                                brush = Brush.verticalGradient(
-                                    colors = listOf(ColorTransparent, Color.Black)
-                                ),
-                            ),
-                    )
-                    Box(
-                        modifier = Modifier
-                            .fillMaxSize()
-                            .background(
-                                color = ColorBlack,
-                            ),
-                    )
-                }
-
-
-                LazyColumn(horizontalAlignment = Alignment.CenterHorizontally,
-                    modifier = Modifier.fillMaxSize()) {
-                    item {
-                        HeaderDetail()
-                        Spacer(modifier = Modifier.height(15.dp))
-                    }
-                    item {
-                        PosterAndTitle()
-                        Spacer(modifier = Modifier.height(15.dp))
-                    }
-                    item {
-                        GenreSlider()
-                        Spacer(modifier = Modifier.height(15.dp))
-                    }
-                    item {
-                        HiglightComment()
-                        Spacer(modifier = Modifier.height(15.dp))
-                    }
-                    item {
-                        ListChapterArea()
-                        Spacer(modifier = Modifier.height(15.dp))
-                    }
-                    items(1000){
-                        ChapterDetailItem()
-                    }
-                }
-
-            }
+        Comments (commentResponse.data){
+            viewModel().setBottomSheetSate(it)
         }
     }
 
     @Composable
-    private fun PosterAndTitle() {
+    override fun OnInitViewCompose() {
+        return LaunchedEffect(key1 = true) {
+            viewModel().showFab(true)
+        }
+    }
 
+
+    @Composable
+    override fun BaseFloatingActionButton() {
+        IconButton(
+            onClick = {
+                viewModel().getComments()
+            },
+            modifier = Modifier
+                .size(70.dp),
+            colors = IconButtonDefaults.iconButtonColors(
+                contentColor = ColorBlack,
+                containerColor = primaryColor
+            )
+        ) {
+            Icon(
+                painter = painterResource(id = R.drawable.ic_comment),
+                contentDescription = null,
+                tint = ColorBlack,
+                modifier = Modifier.size(50.dp)
+            )
+        }
+    }
+
+    @SuppressLint("UnusedMaterial3ScaffoldPaddingParameter")
+    @Composable
+    override fun BaseContent(
+        paddingValues: PaddingValues
+    ) {
+        val seriesId = intent.getStringExtra(Constant.SERIES_ID)
+        LaunchedEffect(true) {
+            viewModel().getDetail(seriesId)
+
+        }
+
+        val state by viewModel().commentState.collectAsStateWithLifecycle()
+
+        when (state) {
+            is UIState.OnError ->{
+                LaunchedEffect(key1 = true) {
+                    viewModel().showLoading(false)
+                    viewModel().showSnackbar("tidak bisa load komentar", true)
+                }
+
+            }
+            is UIState.OnLoading -> {
+                LaunchedEffect(key1 = true) {
+                    viewModel().showLoading(true)
+                }
+            }
+            is UIState.OnSuccess<*> -> {
+                LaunchedEffect(key1 = true) {
+                    viewModel().showLoading(false)
+                    val data = (state as UIState.OnSuccess<*>).data as CommentModelResponse
+                    commentResponse = data
+                    viewModel().setBottomSheetSate(true)
+                }
+
+            }
+
+            UIState.OnIdle -> Unit
+        }
+
+        val detailState by viewModel().detailState.collectAsStateWithLifecycle()
+
+        Box(
+            modifier = Modifier
+                .imePadding()
+                .fillMaxSize()
+        ) {
+            when (detailState) {
+                is UIState.OnError -> {
+                    val message = (detailState as UIState.OnError)?.message
+                    Text(
+                        text = message ?: "",
+                        Modifier.align(Alignment.Center),
+                        color = ColorWhite
+                    )
+                }
+
+                UIState.OnIdle -> Unit
+                UIState.OnLoading -> CircularProgressIndicator(
+                    color = ColorWhite,
+                    modifier = Modifier.align(Alignment.Center)
+                )
+
+                is UIState.OnSuccess<*> -> {
+                    val dataSuccess =
+                        (detailState as UIState.OnSuccess<*>).data as DetailModelResponse
+                    SuccessContent(dataSuccess.data)
+                }
+            }
+
+
+        }
+    }
+
+    @Composable
+    private fun SuccessContent(data: DetailModelResponse.Data?) {
+        val launcher = rememberCallbackActivityLauncher()
         AsyncImage(
-            model = "https://imgsrv.crunchyroll.com/cdn-cgi/image/fit=contain,format=auto,quality=85,width=480,height=720/catalog/crunchyroll/323c82257b2f6567fabbb7bd55bfa753.jpg",
+            model = data?.coverImageUrl,
+            contentDescription = null,
+            contentScale = ContentScale.Crop,
+            modifier = Modifier.fillMaxSize()
+        )
+
+        Column {
+            Box(
+                modifier = Modifier
+                    .fillMaxWidth()
+                    .height(400.dp)
+                    .background(
+                        brush = Brush.verticalGradient(
+                            colors = listOf(ColorTransparent, Color.Black)
+                        ),
+                    ),
+            )
+            Box(
+                modifier = Modifier
+                    .fillMaxSize()
+                    .background(
+                        color = ColorBlack,
+                    ),
+            )
+        }
+
+        LazyColumn(
+            horizontalAlignment = Alignment.CenterHorizontally,
+            modifier = Modifier.fillMaxSize()
+        ) {
+            item {
+                HeaderDetail(data)
+                Spacer(modifier = Modifier.height(15.dp))
+            }
+            item {
+                PosterAndTitle(data)
+                Spacer(modifier = Modifier.height(15.dp))
+            }
+            item {
+                GenreSlider(data?.taxonomy?.Genre)
+                Spacer(modifier = Modifier.height(15.dp))
+            }
+            item {
+                HiglightComment(data)
+                Spacer(modifier = Modifier.height(15.dp))
+            }
+            item {
+                ListChapterArea()
+                Spacer(modifier = Modifier.height(15.dp))
+            }
+            itemsIndexed(data?.chapters?.toList() ?: listOf()) { index, item ->
+                ChapterDetailItem(item) {
+                    val bundle = Bundle().apply {
+                        putString(Constant.CHAPTER_ITEM, item.fromObjectToJson())
+                    }
+                    launchActivity<ReadActivity>(launcher, bundle)
+                }
+            }
+        }
+
+
+    }
+
+    @Composable
+    private fun PosterAndTitle(data: DetailModelResponse.Data?) {
+        val image = if (data?.portraitImageUrl.isNullOrEmpty()) data?.coverImageUrl
+        else data?.portraitImageUrl
+        AsyncImage(
+            model = image,
             contentDescription = null,
             contentScale = ContentScale.Crop,
             modifier = Modifier
@@ -163,15 +276,15 @@ class DetailActivity : BaseActivity() {
                 .clip(RoundedCornerShape(10.dp))
         )
 
-
         Spacer(modifier = Modifier.height(30.dp))
-        Text(text = "ダンダダン (Dandadan)", color = Color.White, fontSize = 15.sp)
+
+        Text(text = data?.title ?: "", color = Color.White, fontSize = 15.sp)
 
     }
 
     @OptIn(ExperimentalMaterial3Api::class)
     @Composable
-    private fun HeaderDetail() {
+    private fun HeaderDetail(data: DetailModelResponse.Data?) {
         Box(
             modifier = Modifier
                 .fillMaxWidth()
@@ -215,7 +328,11 @@ class DetailActivity : BaseActivity() {
                             contentDescription = null,
                             tint = primaryColor
                         )
-                        Text(text = "123", color = Color.White, fontSize = 15.sp)
+                        Text(
+                            text = data?.bookmarkCount.toString(),
+                            color = Color.White,
+                            fontSize = 15.sp
+                        )
                     }
                 }
 
@@ -248,7 +365,9 @@ class DetailActivity : BaseActivity() {
     private fun ListChapterArea() {
         Column {
             Row(
-                modifier = Modifier.fillMaxWidth(),
+                modifier = Modifier
+                    .fillMaxWidth()
+                    .padding(horizontal = 15.dp),
                 horizontalArrangement = Arrangement.SpaceBetween
             ) {
                 Button(
@@ -279,9 +398,10 @@ class DetailActivity : BaseActivity() {
 
     @OptIn(ExperimentalMaterial3Api::class)
     @Composable
-    private fun HiglightComment() {
+    private fun HiglightComment(data: DetailModelResponse.Data?) {
         Box(
             modifier = Modifier
+                .padding(horizontal = 15.dp)
                 .fillMaxWidth()
                 .height(200.dp)
         ) {
@@ -362,9 +482,12 @@ class DetailActivity : BaseActivity() {
                             )
                             Spacer(modifier = Modifier.width(8.dp))
                             Text(
-                                text = "8.7", fontStyle = FontStyle.Normal,
+                                text = data?.userRating.toString() ?: "0",
+                                fontStyle = FontStyle.Normal,
                                 fontSize = 18.sp,
-                                maxLines = 2, overflow = TextOverflow.Ellipsis, color = ColorWhite
+                                maxLines = 2,
+                                overflow = TextOverflow.Ellipsis,
+                                color = ColorWhite
                             )
                             Spacer(modifier = Modifier.width(3.dp))
                             Text(
@@ -445,59 +568,107 @@ class DetailActivity : BaseActivity() {
 
 
     @Composable
-    private fun GenreSlider() {
-        Box(modifier = Modifier.fillMaxWidth()) {
+    private fun GenreSlider(genres: ArrayList<DetailModelResponse.Genre>?) {
+        Box(
+            modifier = Modifier
+                .fillMaxWidth()
+                .height(50.dp)
+        ) {
 
             LazyRow(
-                modifier = Modifier.fillMaxWidth(),
+                modifier = Modifier
+                    .fillMaxWidth()
+                    .align(alignment = Alignment.Center),
                 contentPadding = PaddingValues(5.dp)
             ) {
-                items(10) {
+                itemsIndexed(genres?.toList() ?: listOf()) { index, item ->
                     Box(modifier = Modifier.padding(horizontal = 5.dp)) {
                         Button(
                             onClick = { /*TODO*/ },
                             shape = RoundedCornerShape(10.dp),
                             colors = ButtonDefaults.buttonColors(containerColor = backgroundItemColor)
                         ) {
-                            Text(text = "Comedy", color = ColorWhite, textAlign = TextAlign.Center)
+                            Text(
+                                text = item.name ?: "",
+                                color = ColorWhite,
+                                textAlign = TextAlign.Center
+                            )
                         }
                     }
                 }
             }
 
-            IconButton(
-                onClick = { /*TODO*/ },
+            Row(
                 modifier = Modifier
-                    .size(30.dp)
-                    .align(Alignment.CenterStart),
-                colors = IconButtonDefaults.iconButtonColors(
-                    contentColor = ColorBlack,
-                    containerColor = ColorIcon
-                )
+                    .width(width = 200.dp)
+                    .height(150.dp)
+                    .align(Alignment.CenterStart)
+                    .background(
+                        brush = Brush.linearGradient(
+                            colors = listOf(ColorBlack, Color.Transparent),
+                            start = Offset(0f, 0f),  // Starting point of the gradient (left)
+                            end = Offset(Float.POSITIVE_INFINITY, 0f) // Ending point (right)
+                        )
+                    ),
+                horizontalArrangement = Arrangement.Start,
+                verticalAlignment = Alignment.CenterVertically
             ) {
-                Icon(
-                    painter = painterResource(id = R.drawable.ic_arrow_left_genre),
-                    contentDescription = null
-                )
+
+                Spacer(modifier = Modifier.width(15.dp))
+                IconButton(
+                    onClick = { /*TODO*/ },
+                    modifier = Modifier
+                        .size(30.dp),
+                    colors = IconButtonDefaults.iconButtonColors(
+                        contentColor = ColorBlack,
+                        containerColor = ColorIcon
+                    )
+                ) {
+                    Icon(
+                        painter = painterResource(id = R.drawable.ic_arrow_left_genre),
+                        contentDescription = null
+                    )
+                }
             }
-            IconButton(
-                onClick = { /*TODO*/ },
+
+            Row(
                 modifier = Modifier
+                    .width(width = 200.dp)
+                    .height(150.dp)
                     .align(Alignment.CenterEnd)
-                    .size(30.dp)
-                    .align(Alignment.TopEnd),
-                colors = IconButtonDefaults.iconButtonColors(
-                    contentColor = ColorBlack,
-                    containerColor = ColorIcon
-                )
+                    .background(
+                        brush = Brush.linearGradient(
+                            colors = listOf(ColorBlack, Color.Transparent),
+                            start = Offset(
+                                Float.POSITIVE_INFINITY,
+                                0f
+                            ),  // Starting point of the gradient (left)
+                            end = Offset(0f, 0f) // Ending point (right)
+                        )
+                    ),
+                horizontalArrangement = Arrangement.End,
+                verticalAlignment = Alignment.CenterVertically
             ) {
-                Icon(
-                    painter = painterResource(id = R.drawable.ic_arrow_right_genre),
-                    contentDescription = null
-                )
+                IconButton(
+                    onClick = { /*TODO*/ },
+                    modifier = Modifier
+                        .size(30.dp),
+                    colors = IconButtonDefaults.iconButtonColors(
+                        contentColor = ColorBlack,
+                        containerColor = ColorIcon
+                    )
+                ) {
+                    Icon(
+                        painter = painterResource(id = R.drawable.ic_arrow_right_genre),
+                        contentDescription = null
+                    )
+                }
+                Spacer(modifier = Modifier.width(15.dp))
             }
         }
     }
 
 }
+
+
 
