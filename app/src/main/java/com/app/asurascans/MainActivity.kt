@@ -28,6 +28,11 @@ import androidx.compose.material3.NavigationBarItem
 import androidx.compose.material3.NavigationBarItemDefaults
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.LaunchedEffect
+import androidx.compose.runtime.getValue
+import androidx.compose.runtime.mutableStateOf
+import androidx.compose.runtime.remember
+import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.platform.LocalContext
@@ -72,15 +77,17 @@ class MainActivity : BaseActivity() {
     )
 
 
-/*
-    @Composable
-    override fun  viewModel() = hiltViewModel< HomeVM>()
-*/
-override fun viewModel(): HomeVM {
-    val viewModel :HomeVM by viewModels()
-    return viewModel
-}
+    override fun viewModel(): HomeVM {
+        val viewModel: HomeVM by viewModels()
+        return viewModel
+    }
 
+    @Composable
+    override fun OnInitViewCompose()  {
+        LaunchedEffect(true) {
+            viewModel().showFab(true)
+        }
+    }
 
     @SuppressLint("UnusedMaterial3ScaffoldPaddingParameter")
     @Composable
@@ -90,10 +97,11 @@ override fun viewModel(): HomeVM {
 
         val currentRoute = getBaseCurrentRouteNavigation()
         requestPermissions(Manifest.permission.POST_NOTIFICATIONS)
-        return  Column(
+        return Column(
             Modifier
                 .padding(paddingValues)
-                .background(BackroundColor)) {
+                .background(BackroundColor)
+        ) {
             //    Header()
             NavHost(
                 navController = getBaseRememberNavController(),
@@ -102,7 +110,7 @@ override fun viewModel(): HomeVM {
 
 
                 composable(NavigationItem.Home.route) {
-                    HomeScreen(modifier = Modifier.weight(1f) , viewModel())
+                    HomeScreen(modifier = Modifier.weight(1f), viewModel())
                 }
                 composable(NavigationItem.List.route) {
                     AlphabetScreen(modifier = Modifier.weight(1f))
@@ -206,7 +214,7 @@ override fun viewModel(): HomeVM {
     @Composable
     override fun BaseBottomBar() {
         val currentRoute = getBaseCurrentRouteNavigation()
-        val navController= getBaseRememberNavController()
+        val navController = getBaseRememberNavController()
         BottomAppBar {
 
             items.forEach { item ->
@@ -231,7 +239,8 @@ override fun viewModel(): HomeVM {
                         selectedIconColor = primaryColor
                     ),
                     onClick = {
-                        showFloatActionButton =  item.route == items.first().route
+                        val showFloatActionButton = items.first().route == item.route
+                        viewModel().showFab(showFloatActionButton)
                         Log.d("NavigationClick", "Navigating to: ${item.route}")
                         navController.navigate(item.route)
                     }
@@ -243,7 +252,7 @@ override fun viewModel(): HomeVM {
 
 
     @Composable
-    override fun BaseFloatingActionButton()  {
+    override fun BaseFloatingActionButton() {
         IconButton(
             onClick = { /*TODO*/ },
             modifier = Modifier
@@ -260,15 +269,10 @@ override fun viewModel(): HomeVM {
                 modifier = Modifier.size(40.dp)
             )
         }
-       /*  AnimatedVisibility(visible = getBaseCurrentRouteNavigation() == items.first().route) {
 
-        }*/
+
     }
 }
-
-
-
-
 
 
 @Preview(showBackground = true)

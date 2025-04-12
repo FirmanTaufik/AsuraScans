@@ -24,7 +24,16 @@ import kotlin.reflect.KProperty
     @Inject
     protected lateinit var apiService: ApiService
 
-    var bottomSheetState = mutableStateOf(false)
+
+     var showFab = mutableStateOf(false)
+         private set
+
+     fun showFab(valueBoolean: Boolean){
+         showFab.value= valueBoolean
+     }
+
+
+     var bottomSheetState = mutableStateOf(false)
         private set
 
     fun setBottomSheetSate(value: Boolean) {
